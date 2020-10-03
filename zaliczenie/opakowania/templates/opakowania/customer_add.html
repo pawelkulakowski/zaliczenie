@@ -1,0 +1,33 @@
+<{% extends "opakowania/base.html" %}
+{% block title %}
+Witaj
+{% endblock %}
+
+{% block content %}
+
+<form action="" method="post">
+    {% csrf_token %}
+    <fieldset>
+        <legend>Dane klienta</legend>
+        {{ customer_form }}
+    </fieldset>
+</form>
+
+<hr>
+<form action="" method="post">
+    {% csrf_token %}
+    <fieldset>
+        <legend>Dane adresowe</legend>
+        {{ address_form }}
+    </fieldset>
+</form>
+<hr>
+<form action="" method="post">
+    {% csrf_token %}
+    <fieldset>
+        <legend>Dane kontaktowe</legend>
+        {{ contact_form }}
+    </fieldset>
+</form>
+
+{% endblock %}

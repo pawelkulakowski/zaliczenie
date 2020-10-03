@@ -2,27 +2,27 @@ from django.db import models
 
 
 class Customer(models.Model):
-    name = models.CharField(max_length=128, null=False)
-    tax_code = models.CharField(max_length=20, null=False)
-    description = models.TextField()
+    name = models.CharField(max_length=128, null=False, verbose_name='Nazwa klienta')
+    tax_code = models.CharField(max_length=20, null=False, verbose_name='NIP')
+    description = models.TextField(verbose_name='Opis')
     created = models.DateField(auto_now_add=True)
 
 
 class Address(models.Model):
-    zip_code = models.CharField(max_length=10, null=False)
-    city = models.CharField(max_length=64,  null=False)
-    address = models.CharField(max_length=64, null=False)
-    primary = models.BooleanField(default=False)
-    customer = models.ForeignKey(Customer, on_delete=models.DO_NOTHING)
+    zip_code = models.CharField(max_length=10, null=False, verbose_name='Kod pocztowy')
+    city = models.CharField(max_length=64,  null=False, verbose_name='Miejscowość')
+    address = models.CharField(max_length=64, null=False, verbose_name='Adres')
+    primary = models.BooleanField(default=False, verbose_name='Główny')
+    customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
 
 
 class Contact(models.Model):
-    name = models.CharField(max_length=128, null=False)
-    phone = models.CharField(max_length=64, null=False)
-    email = models.EmailField(null=True)
-    position = models.CharField(max_length=64, null=True)
-    primary = models.BooleanField(default=False)
-    customer = models.ForeignKey(Customer, null=True, on_delete=models.SET_NULL)
+    name = models.CharField(max_length=128, null=False, verbose_name='Imię i nazwisko')
+    phone = models.CharField(max_length=64, null=False, verbose_name='Telefon')
+    email = models.EmailField(null=True, verbose_name='Email')
+    position = models.CharField(max_length=64, null=True, verbose_name='Stanowisko')
+    primary = models.BooleanField(default=False, verbose_name='Główny')
+    customer = models.ForeignKey(Customer, null=True, on_delete=models.CASCADE)
 
 
 class User(models.Model):

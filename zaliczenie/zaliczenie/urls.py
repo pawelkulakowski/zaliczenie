@@ -15,8 +15,9 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, re_path
-from opakowania.views import MakeCustomers
+from opakowania import views
 
 urlpatterns = [
-    re_path(r'^addCustomers/$', MakeCustomers.as_view(), name="addCusotmers")
+    path('', views.MainPageView.as_view(), name='main-page'),
+    path('add-customer', views.CustomerAddView.as_view(), name='customer-add')
 ]

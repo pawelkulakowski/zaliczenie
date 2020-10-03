@@ -1,11 +1,25 @@
 from django.shortcuts import render
-from django.views import View
-from opakowania.models import *
+from django import views
+from opakowania import forms
 
 
-class MakeCustomers(View):
-    @staticmethod
-    def get(request):
-        c1 = Customer.objects.create(name="Kliencik", tax_code="111-111-11-11")
-        c2 = Customer.objects.create(name="Pudłomat", tax_code="111-111-11-11")
-        return render(request, "index.html")
+class MainPageView(views.View):
+    def get(self, request):
+        return render(request, 'opakowania/index.html')
+
+
+class CustomerAddView(views.View):
+
+    def get(self, request):
+        customer_form = forms.CustomerForm()
+        address_form = forms.AddressForm()
+        contact_form = forms.ContactForm()
+
+        ctx = {
+            'customer_form': customer_form,
+            'address_form': address_form,
+            'contact_form': contact_form,
+            'primary': True
+        }
+
+        return render(request, 'opakowania/customer_add.html', ctx)
