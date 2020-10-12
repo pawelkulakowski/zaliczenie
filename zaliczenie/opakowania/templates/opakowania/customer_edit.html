@@ -1,0 +1,160 @@
+{% extends "opakowania/base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}
+Witaj
+{% endblock %}
+
+{% block content %}
+
+
+
+<div class="row col-12">{{ customer_form.non_field_errors }}</div>
+<div class="h2">Podaj dane klienta, dane kontaktowe i adresowe</div>
+<hr>
+<div class="row col-12">
+    <div class="col-3">
+        <form action="" method="post">
+            {% csrf_token %}
+            <div class="h3">Dane klienta</div>
+            <div class="col-12">{{ customer_form.customer_name|as_crispy_field }}</div>
+            <div class="col-12">{{ customer_form.tax_code|as_crispy_field }}</div>
+            <div class="col-12">{{ customer_form.description|as_crispy_field }}</div>
+            <input type="submit" value="Zapisz zmiany" class="btn btn-info btn-lg btn-block">
+            <a href="{% url 'customer-add-contact' customer_form.instance.id%}"
+                class="generic-modal btn btn-info btn-lg btn-block">Dodaj kontakt</a>
+
+            <a href="{% url 'customer-add-address' customer_form.instance.id%}"
+                class="generic-modal btn btn-info btn-lg btn-block">Dodaj adres</a>
+        </form>
+
+    </div>
+    <div class="col-9">
+        <div class="row col-12">
+            <div class="row col-12">
+                <div class="h3 col-12">Kontakty</div>
+                <div class="table-wrapper-scroll-y my-custom-scrollbar col-12">
+                    <table class="table table-sm table-striped table-borderless">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col" class="th-sm" style="width:10%">Imię i nazwisko</th>
+                                <th scope="col" class="th-sm" style="width:10%">Stanowisko</th>
+                                <th scope="col" class="th-sm">Email</th>
+                                <th scope="col" class="th-sm">Telefon</th>
+                                <th scope="col" class="th-sm">Główny</th>
+                                <th scope="col" class="th-sm"></th> <!-- edit -->
+                                <th scope="col" class="th-sm"></th> <!-- set primary -->
+                                <th scope="col" class="th-sm"></th> <!-- delete -->
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for contact in contacts %}
+                            {% if contact.primary %}
+                            <tr class="font-weight-bold">
+                                <td>{{ contact.name }}</td>
+                                <td>{{ contact.position }}</td>
+                                <td>{{ contact.email }}</td>
+                                <td>{{ contact.phone }}</td>
+                                <td>Tak</td>
+                                <td><a class="text-info" data-toggle="tooltip" data-placement="right"
+                                        title="Edytuj kontakt"
+                                        href="{% url 'customer-edit-contact' customer_form.instance.id contact.id %}"><i
+                                            class="fas fa-user-edit"></i></a></td>
+                                <td></td>
+                                <td><a class="text-info" data-toggle="tooltip" data-placement="right"
+                                        title="Usuń contact" href="#"><i class="fas fa-user-minus"></i></a></td>
+                            </tr>
+                            {%else%}
+                            <tr>
+                                <td>{{ contact.name }}</td>
+                                <td>{{ contact.position }}</td>
+                                <td>{{ contact.email }}</td>
+                                <td>{{ contact.phone }}</td>
+                                <td>Nie</td>
+                                <td><a class="generic-modal text-info" data-toggle="tooltip" data-placement="right"
+                                        title="Edytuj kontakt"
+                                        href="{% url 'customer-edit-contact' customer_form.instance.id contact.id %}"><i
+                                            class="fas fa-user-edit"></i></a>
+                                </td>
+                                <td><a class="text-info" data-toggle="tooltip" data-placement="right"
+                                        title="Ustaw jako główny"
+                                        href="{% url 'contact-set-primary' customer_form.instance.id contact.id %}"><i
+                                            class="fas fa-users"></i>
+                                    </a></td>
+                                <td><a class="text-info" data-toggle="tooltip" data-placement="right" title="Usuń"
+                                        href="#"><i class="fas fa-user-minus"></i></a></td>
+
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <hr>
+        <hr>
+        <div class="row col-12">
+            <div class="row col-12">
+                <div class="h3 col-12">Adresy</div>
+                <div class="table-wrapper-scroll-y my-custom-scrollbar col-12">
+                    <table class="table table-sm table-striped table-borderless">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th scope="col">Adres</th>
+                                <th scope="col">Miejscowość</th>
+                                <th scope="col">Kod pocztowy</th>
+                                <th scope="col" class="th-sm">Główny</th>
+                                <th scope="col" class="th-sm"></th> <!-- edit -->
+                                <th scope="col" class="th-sm"></th> <!-- set primary -->
+                                <th scope="col" class="th-sm"></th> <!-- delete -->
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for address in addresses %}
+                            {% if address.primary %}
+                            <tr class="font-weight-bold">
+                                <td>{{ address.address }}</td>
+                                <td>{{ address.city }}</td>
+                                <td>{{ address.zip_code }}</td>
+                                <td>TAK</td>
+                                <td><a class="generic-modal text-info" data-toggle="tooltip" data-placement="right"
+                                        title="Edytuj adres"
+                                        href="{% url 'customer-edit-address' customer_form.instance.id address.id %}"><i
+                                            class="fas fa-user-edit"></i></a></td>
+                                <td></td>
+                                <td><a class="generic-modal text-info" data-toggle="tooltip" data-placement="right"
+                                        title="Usuń adres" href="#"><i class="fas fa-user-minus"></i></a></td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td>{{ address.address }}</td>
+                                <td>{{ address.city }}</td>
+                                <td>{{ address.zip_code }}</td>
+                                <td>Nie</td>
+                                <td><a class="generic-modal text-info" data-toggle="tooltip" data-placement="right"
+                                        title="Edytuj adres"
+                                        href="{% url 'customer-edit-address' customer_form.instance.id address.id %}"><i
+                                            class="fas fa-user-edit"></i></a>
+                                </td>
+                                <td><a class="text-info" data-toggle="tooltip" data-placement="right"
+                                        title="Ustaw jako główny" href="#"><i class="fas fa-users"></i>
+                                    </a></td>
+                                <td><a class="generic-modal text-info" data-toggle="tooltip" data-placement="right"
+                                        title="usuń kontakt" href="#"><i class="fas fa-user-minus"></i></a></td>
+                            </tr>
+                            {% endif %}
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<div id="modalContainer"></div>
+
+{% endblock %}

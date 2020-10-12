@@ -1,4 +1,7 @@
-<{% extends "opakowania/base.html" %}
+{% extends "opakowania/base.html" %}
+
+
+
 {% block title %}
 Witaj
 {% endblock %}
@@ -7,6 +10,8 @@ Witaj
 
 <ul>
     <li><a href="{% url 'customer-add' %}">Dodaj klienta</a></li>
+
+    <li><a href="{% url 'customer-search' %}">Wyszukaj klienta</a></li>
 </ul>
 
 {% endblock %}

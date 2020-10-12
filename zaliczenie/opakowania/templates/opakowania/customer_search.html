@@ -1,0 +1,54 @@
+{% extends "opakowania/base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}
+Witaj
+{% endblock %}
+
+{% block content %}
+<div class="col-10">
+    <p class="h1">Wyszukaj klienta</p>
+    <hr>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-6">{{ form.customer_name|as_crispy_field }}</div>
+            <div class="col-6">{{ form.tax_code|as_crispy_field }}</div>
+        </div>
+        <input type="submit" value="Filtruj" class="btn btn-secondary btn-lg btn-block">
+        <br>
+
+        {% if results %}
+        <table class="table table-hover table-striped text-center">
+            <thead class="thead-dark">
+                <tr>
+                    <th scope="col" style="width: 10%">#</th>
+                    <th scope="col" style="width: 50%">Nazwa</th>
+                    <th scope="col" style="width: 20%">Nip</th>
+                    <th scope="col" style="width: 10%"></th>
+                    <th scope="col" style="width: 10%"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for res in results %}
+                <tr>
+                    <th scope="row">{{ forloop.counter }}</th>
+                    <td><a class="btn btn-block btn-sm" href="#">{{ res.customer_name }}</a></td>
+                    <td>{{ res.tax_code }} </td>
+                    <td><a href="{% url 'customer-edit' res.id %}">Edytuj</a></td>
+                    <td><a href="#">Nowa Oferta</a></td>
+                </tr>
+
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+
+    </form>
+</div>
+<br>
+
+
+{% endblock %}
