@@ -27,13 +27,31 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    $("body").on('click', ".offerContactList", function (e) {
+        e.preventDefault();
+        console.log(this.href);
+
+        $.get(this.href, function (data) {
+            $('#offerContactListContainer').html(data);
+        });
+    });
+
+    $("body").on('click', ".offerAddressList", function (e) {
+        e.preventDefault();
+        console.log(this.href);
+
+        $.get(this.href, function (data) {
+            $('#offerAddressListContainer').html(data);
+        });
+    });
+
     $("body").on('click', ".close-modal", function (e) {
         e.preventDefault();
         $("#staticBackdrop").modal('hide');
         window.location.reload();
     });
 
-    $('[data-toggle=tooltip]').tooltip({delay: { "show": 200, "hide": 100 }});
+    $('[data-toggle=tooltip]').tooltip({ delay: { "show": 200, "hide": 100 } });
 
 
     //this changes delay time for hyperlink icons

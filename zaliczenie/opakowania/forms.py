@@ -35,15 +35,6 @@ class CustomerNewForm(forms.ModelForm):
         }
 
 
-class CustomerEditForm(CustomerNewForm):
-
-    def __init__(self, user, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['addressList'].queryset = models.Address.objects.filter(customer_pk=self.instance.id)
-
-    addressList = models.AddressChoiceField(queryset=None)
-
-
 class CustomerSearchForm(forms.Form):
     alphanumeric = RegexValidator(r"^[0-9]*$", "Dozwolone są tylko cyfry")
 
@@ -68,7 +59,7 @@ class CustomerSearchForm(forms.Form):
 
 class AddressNewForm(forms.ModelForm):
     def clean_zip_code(self):
-        zip_code = self.cleaned_data['zip_code']
+        zip_code = self.cleaned_data["zip_code"]
         if re.search("[0-9][0-9]-[0-9][0-9][0-9]$", zip_code) is None:
             raise ValidationError("Kod pocztowy powinien mieć format XX-XXX")
         return zip_code
@@ -90,12 +81,16 @@ class AddressNewForm(forms.ModelForm):
 class ContactNewForm(forms.ModelForm):
     def clean_phone(self):
         phone = self.cleaned_data["phone"]
-        if phone != "" and re.search("[0-9][0-9][0-9]-[0-9][0-9][0-9]-[0-9][0-9][0-9]", phone) is None:
+        if (
+            phone != ""
+            and re.search("[0-9][0-9][0-9]-[0-9][0-9][0-9]-[0-9][0-9][0-9]", phone)
+            is None
+        ):
             raise ValidationError("Numer telefonu powinien mieć format XXX-XXX-XXX")
         return phone
 
     def clean(self):
-        cleaned_data=super().clean()
+        cleaned_data = super().clean()
         phone = cleaned_data.get("phone")
         email = cleaned_data.get("email")
         if phone == "" and email == "":
@@ -116,3 +111,37 @@ class ContactNewForm(forms.ModelForm):
     class Meta:
         model = models.Contact
         fields = ["name", "phone", "email", "position", "primary"]
+
+
+class OfferNewForm(forms.ModelForm):
+    def __init__(self, customer, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["addressList"].queryset = models.Address.objects.filter(
+            customer_pk=self.instance.id
+        )
+
+    address_list = models.AddressChoiceField(queryset=None)
+
+
+class ContactChangeForm(forms.Form):
+    def __init__(self, customer, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["contactList"].queryset = models.Contact.objects.filter(
+            customer=customer
+        ).order_by("-primary")
+
+    contactList = models.ConatactChoiceField(
+        queryset=None, label="Wybierz nowy kontakt z listy", initial=1
+    )
+
+
+class AddressChangeForm(forms.Form):
+    def __init__(self, customer, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields["addressList"].queryset = models.Address.objects.filter(
+            customer=customer
+        ).order_by("-primary")
+
+    addressList = models.AddressChoiceField(
+        queryset=None, label="Wybierz nowy adres z listy", initial=1
+    )

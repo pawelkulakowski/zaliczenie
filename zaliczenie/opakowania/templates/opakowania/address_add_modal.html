@@ -14,7 +14,10 @@
                 {% csrf_token %}
                 <div class="modal-body">
 
-                    {{ address_form|crispy }}
+                    {{ address_form.zip_code|as_crispy_field }}
+                    {{ address_form.city|as_crispy_field }}
+                    {{ address_form.address|as_crispy_field }}
+                    
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary close-modal" data-dismiss="modal">Anuluj</button>

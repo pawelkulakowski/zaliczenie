@@ -58,13 +58,12 @@ Witaj
                                 <td>{{ contact.email }}</td>
                                 <td>{{ contact.phone }}</td>
                                 <td>Tak</td>
-                                <td><a class="text-info" data-toggle="tooltip" data-placement="right"
+                                <td><a class="generic-modal text-info" data-toggle="tooltip" data-placement="right"
                                         title="Edytuj kontakt"
                                         href="{% url 'customer-edit-contact' customer_form.instance.id contact.id %}"><i
                                             class="fas fa-user-edit"></i></a></td>
                                 <td></td>
-                                <td><a class="text-info" data-toggle="tooltip" data-placement="right"
-                                        title="Usuń contact" href="#"><i class="fas fa-user-minus"></i></a></td>
+                                <td></td>
                             </tr>
                             {%else%}
                             <tr>
@@ -83,8 +82,9 @@ Witaj
                                         href="{% url 'contact-set-primary' customer_form.instance.id contact.id %}"><i
                                             class="fas fa-users"></i>
                                     </a></td>
-                                <td><a class="text-info" data-toggle="tooltip" data-placement="right" title="Usuń"
-                                        href="#"><i class="fas fa-user-minus"></i></a></td>
+                                <td><a class="generic-modal text-info" data-toggle="tooltip" data-placement="right" title="Usuń"
+                                        href="{% url 'customer-delete-contact' customer_form.instance.id contact.id %}"><i
+                                            class="fas fa-user-minus"></i></a></td>
 
                             </tr>
                             {% endif %}
@@ -119,14 +119,13 @@ Witaj
                                 <td>{{ address.address }}</td>
                                 <td>{{ address.city }}</td>
                                 <td>{{ address.zip_code }}</td>
-                                <td>TAK</td>
+                                <td>Tak</td>
                                 <td><a class="generic-modal text-info" data-toggle="tooltip" data-placement="right"
                                         title="Edytuj adres"
                                         href="{% url 'customer-edit-address' customer_form.instance.id address.id %}"><i
                                             class="fas fa-user-edit"></i></a></td>
                                 <td></td>
-                                <td><a class="generic-modal text-info" data-toggle="tooltip" data-placement="right"
-                                        title="Usuń adres" href="#"><i class="fas fa-user-minus"></i></a></td>
+                                <td></td>
                             </tr>
                             {% else %}
                             <tr>
@@ -140,10 +139,14 @@ Witaj
                                             class="fas fa-user-edit"></i></a>
                                 </td>
                                 <td><a class="text-info" data-toggle="tooltip" data-placement="right"
-                                        title="Ustaw jako główny" href="#"><i class="fas fa-users"></i>
+                                        title="Ustaw jako główny"
+                                        href="{% url 'address-set-primary' customer_form.instance.id address.id %}"><i
+                                            class="fas fa-users"></i>
                                     </a></td>
                                 <td><a class="generic-modal text-info" data-toggle="tooltip" data-placement="right"
-                                        title="usuń kontakt" href="#"><i class="fas fa-user-minus"></i></a></td>
+                                        title="usuń kontakt"
+                                        href="{% url 'customer-delete-address' customer_form.instance.id address.id %}"><i
+                                            class="fas fa-user-minus"></i></a></td>
                             </tr>
                             {% endif %}
                             {% endfor %}

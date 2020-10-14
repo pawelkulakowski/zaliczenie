@@ -20,7 +20,9 @@ Witaj
         <input type="submit" value="Filtruj" class="btn btn-secondary btn-lg btn-block">
         <br>
 
-        {% if results %}
+ 
+
+        {% if customers %}
         <table class="table table-hover table-striped text-center">
             <thead class="thead-dark">
                 <tr>
@@ -32,15 +34,15 @@ Witaj
                 </tr>
             </thead>
             <tbody>
-                {% for res in results %}
+                {% for customer in customers %}
+
                 <tr>
                     <th scope="row">{{ forloop.counter }}</th>
-                    <td><a class="btn btn-block btn-sm" href="#">{{ res.customer_name }}</a></td>
+                    <td><a class="btn btn-block btn-sm" href="#">{{ customer.customer_name }}</a></td>
                     <td>{{ res.tax_code }} </td>
-                    <td><a href="{% url 'customer-edit' res.id %}">Edytuj</a></td>
-                    <td><a href="#">Nowa Oferta</a></td>
+                    <td><a href="{% url 'customer-edit' customer.id %}">Edytuj</a></td>
+                    <td><a href="{% url 'add-offer' customer.id customer.get_primary_contact.id customer.get_primary_address.id %}">Nowa Oferta {{ contact.id }}</a></td>
                 </tr>
-
                 {% endfor %}
             </tbody>
         </table>

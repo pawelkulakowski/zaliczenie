@@ -1,26 +1,30 @@
 {% load crispy_forms_tags %}
 
-
 <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1"
     aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Edytuj adres</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <h5 class="modal-title" id="staticBackdropLabel">Podaj dane nowe kontaktu</h5>
+                <button type="button" class="close-modal" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{% url 'customer-edit-address' customer_id address_id %}" method="POST">
+            <form action="{% url 'customer-delete-address' customer_id address_id %}" method="POST">
                 {% csrf_token %}
                 <div class="modal-body">
+
                     {{ address_form.zip_code|as_crispy_field }}
                     {{ address_form.city|as_crispy_field }}
                     {{ address_form.address|as_crispy_field }}
+
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
-                    <input type="submit" class="btn btn-primary" value="Zapisz">
+                <div class="modal-footer alert alert-danger">
+                    <p class="h4 ">Czy na pewno chcesz usunąć ten adres z bazy danych?</p>
+                    <p>
+                        <button type="button" class="btn btn-secondary btn-sm btn-block close-modal" data-dismiss="modal">Anuluj</button>
+                        <input type="submit" class="btn btn-danger btn-sm btn-block" value="Usuń">
+                    </p>
                 </div>
             </form>
         </div>

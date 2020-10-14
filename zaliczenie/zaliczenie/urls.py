@@ -18,13 +18,68 @@ from django.urls import path, re_path
 from opakowania import views
 
 urlpatterns = [
-    path('', views.MainPageView.as_view(), name='main-page'),
-    path('add-customer', views.CustomerAddView.as_view(), name='customer-add'),
-    path('search-customer', views.CustomerSearchView.as_view(), name='customer-search'),
-    path('customer/<int:customer_id>/', views.CustomerEditView.as_view(), name='customer-edit'),
-    path('customer/<int:customer_id>/<int:contact_id>', views.ContactSetPrimaryView.as_view(), name='contact-set-primary'),
-    path('customer/<int:customer_id>/add-contact', views.ContactAddModalView.as_view(), name='customer-add-contact'),
-    path('customer/<int:customer_id>/edit-contact/<int:contact_id>/', views.ContactEditModalView.as_view(), name='customer-edit-contact'),
-    path('customer/<int:customer_id>/add-address', views.AddressAddModalView.as_view(), name='customer-add-address'),
-    path('customer/<int:customer_id>/edit-address/<int:address_id>/', views.AddressEditModalView.as_view(), name='customer-edit-address'),
+    path("", views.MainPageView.as_view(), name="main-page"),
+    path("add-customer", views.CustomerAddView.as_view(), name="customer-add"),
+    path("search-customer", views.CustomerSearchView.as_view(), name="customer-search"),
+    path(
+        "customer/<int:customer_id>/",
+        views.CustomerEditView.as_view(),
+        name="customer-edit",
+    ),
+    path(
+        "customer/<int:customer_id>/contact_primary/<int:contact_id>",
+        views.ContactSetPrimaryView.as_view(),
+        name="contact-set-primary",
+    ),
+    path(
+        "customer/<int:customer_id>/add-contact",
+        views.ContactAddModalView.as_view(),
+        name="customer-add-contact",
+    ),
+    path(
+        "customer/<int:customer_id>/edit-contact/<int:contact_id>/",
+        views.ContactEditModalView.as_view(),
+        name="customer-edit-contact",
+    ),
+    path(
+        "customer/<int:customer_id>/delete-contact/<int:contact_id>/",
+        views.ContactDeleteModalView.as_view(),
+        name="customer-delete-contact",
+    ),
+    path(
+        "customer/<int:customer_id>/add-address",
+        views.AddressAddModalView.as_view(),
+        name="customer-add-address",
+    ),
+    path(
+        "customer/<int:customer_id>/address_primary/<int:address_id>",
+        views.AddressSetPrimaryView.as_view(),
+        name="address-set-primary",
+    ),
+    path(
+        "customer/<int:customer_id>/edit-address/<int:address_id>/",
+        views.AddressEditModalView.as_view(),
+        name="customer-edit-address",
+    ),
+    path(
+        "customer/<int:customer_id>/delete-address/<int:address_id>/",
+        views.AddressDeleteModalView.as_view(),
+        name="customer-delete-address",
+    ),
+  
+    re_path(
+        r"^customer/(?P<customer_id>\d+)/add-offer/(?P<contact_id>\d+)/(?P<address_id>\d+)/$",
+        views.OfferNewView.as_view(),
+        name="add-offer",
+    ),
+    path(
+        "customer/<int:customer_id>/add-offer/<int:contact_id>/<int:address_id>/change-contact",
+        views.OfferChangeContact.as_view(),
+        name="offer-change-contact",
+    ),
+    path(
+        "customer/<int:customer_id>/add-offer/<int:contact_id>/<int:address_id>/change-address",
+        views.OfferChangeAddress.as_view(),
+        name="offer-change-address",
+    ),
 ]
