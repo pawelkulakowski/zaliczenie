@@ -13,3 +13,17 @@ a.disabled-link{
     cursor: default;
     color: gray;
 }
+
+.btn {
+    white-space:normal !important; 
+    word-wrap: break-word; 
+    word-break: normal;
+}
+
+.hr-p-5{
+    padding: 5px;  
+  }
+
+.hr-m-0{
+    margin: 0px;
+}

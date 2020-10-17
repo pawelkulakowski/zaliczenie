@@ -148,5 +148,89 @@ class AddressChangeForm(forms.Form):
 
 
 class OfferCommentForm(forms.Form):
-    comments = forms.CharField(widget=forms.Textarea(attrs={'rows': 6, 'cols': 40, 'spellcheck': 'true'}), required=False)
+    comments = forms.CharField(
+        widget=forms.Textarea(attrs={"rows": 6, "cols": 40, "spellcheck": "true"}),
+        required=False,
+    )
+
+
+class AddPositionForm(forms.ModelForm):
+    name = forms.CharField(
+        widget=forms.Textarea(
+            attrs={
+                "rows": 2,
+            }
+        ),
+        label="Nazwa",
+    )
+    innerIndex = forms.CharField(
+        widget=forms.Textarea(
+            attrs={
+                "rows": 2,
+            }
+        ),
+        label="Indeks wewnętrzny",
+        required=False,
+    )
+    outsideIndex = forms.CharField(
+        widget=forms.Textarea(
+            attrs={
+                "rows": 2,
+            }
+        ),
+        label="Indeks zewnętrzny",
+        required=False,
+    )
+    commentJoin = forms.CharField(
+        widget=forms.Textarea(
+            attrs={"rows": 2, "placeholder": "Dodatkowe informacje na temat łączenia"}
+        ),
+        label=False,
+        required=False,
+    )
+    comments = forms.CharField(
+        widget=forms.Textarea(
+            attrs={"rows": 3, "placeholder": "Dodatkowe informacje dotyczące zlecenia"}
+        ),
+        label="Uwagi dodatkowe",
+        required=False,
+    )
+    deliveryVariantOne = forms.IntegerField(
+        widget=forms.NumberInput(attrs={"placeholder": "Wariant 1"}),
+        label='Dostawa',
+        required=False,
+        validators=[validators.positive_number_validator]
+    )
+    deliveryVariantTwo = forms.IntegerField(
+        widget=forms.NumberInput(attrs={"placeholder": "Wariant 2"}),
+        label=False,
+        required=False,
+        validators=[validators.positive_number_validator]
+    )
+    deliveryVariantThree = forms.IntegerField(
+        widget=forms.NumberInput(attrs={"placeholder": "Wariant 3"}),
+        label=False,
+        required=False,
+        validators=[validators.positive_number_validator]
+    )
+    deliveryYearly = forms.IntegerField(
+        widget=forms.NumberInput(attrs={"placeholder": "Rocznie"}),
+        label=False,
+        required=False,
+        validators=[validators.positive_number_validator]
+    )
+
+
+    class Meta:
+        model = models.Product
+        fields = "__all__"
+
+    def __init__(self,offer,customer,  *args, **kwargs):
+        super(AddPositionForm, self).__init__(*args, **kwargs)
+        self.fields['contactPerson'].queryset = customer.contact_set.all()
+        self.fields['contactPerson'].empty_label=None
+        self.fields['deliveryAddress'].queryset = customer.address_set.all()
+        self.fields['deliveryAddress'].empty_label = None
         
+        for visible in self.visible_fields():
+            visible.field.widget.attrs["class"] = "form-control-sm"

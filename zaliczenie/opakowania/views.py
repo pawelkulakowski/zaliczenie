@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django import views
+from django.views.generic.edit import FormView
 from opakowania import forms
 from opakowania import models
 from django.http import HttpResponse, HttpResponseRedirect
@@ -298,7 +299,7 @@ class AddressDeleteModalView(views.View):
 
 class OfferNewView(views.View):
     def get(self, request, **kwargs):
-        customer = models.Customer.objects.get(pk=self.kwargs['customer_id'])
+        customer = models.Customer.objects.get(pk=self.kwargs["customer_id"])
         commentForm = forms.OfferCommentForm()
 
         if "contact_id" in self.kwargs:
@@ -325,7 +326,7 @@ class OfferNewView(views.View):
             .filter(created__month=month)
             .count()
         )
-        
+
         offer = models.Offer()
         offer.customerAddress = address
         offer.customerContact = contact
@@ -335,21 +336,22 @@ class OfferNewView(views.View):
             "contact": contact,
             "address": address,
             "customer": customer,
-            "commentForm": commentForm
+            "commentForm": commentForm,
         }
 
         return render(request, "opakowania/offer_add.html", ctx)
 
     def post(self, request, **kwargs):
-        customer = models.Customer.objects.get(pk=self.kwargs['customer_id'])
+        customer = models.Customer.objects.get(pk=self.kwargs["customer_id"])
         address = models.Address.objects.get(pk=self.kwargs["address_id"])
         contact = models.Contact.objects.get(pk=self.kwargs["contact_id"])
         commentForm = forms.OfferCommentForm(request.POST)
         offer = models.Offer()
+        offer.customer = customer
         offer.customerAddress = address
         offer.customerContact = contact
         commentForm.full_clean()
-        offer.comments = commentForm.cleaned_data['comments']
+        offer.comments = commentForm.cleaned_data["comments"]
         year = datetime.now().year
         month = datetime.now().month
         offer_count = (
@@ -358,14 +360,24 @@ class OfferNewView(views.View):
             .count()
         )
         offer.signature = f"{year}/{month}/{offer_count + 1}"
+
         offer.save()
-        return HttpResponse(offer.comments)
+        # return HttpResponse('działa')
+        return redirect(
+            reverse(
+                "offer-edit",
+                kwargs={
+                    "customer_id": self.kwargs["customer_id"],
+                    "offer_id": offer.id,
+                },
+            )
+        )
 
 
 class OfferChangeContact(views.View):
     def get(self, request, **kwargs):
         form = forms.ContactChangeForm(
-            models.Customer.objects.get(pk=self.kwargs['customer_id']),
+            models.Customer.objects.get(pk=self.kwargs["customer_id"]),
         )
         ctx = {"contact_select_form": form, **kwargs}
         return render(request, "opakowania/select_field.html", ctx)
@@ -375,7 +387,11 @@ class OfferChangeContact(views.View):
         return HttpResponseRedirect(
             reverse(
                 "add-offer",
-                kwargs={"customer_id": self.kwargs['customer_id'], "contact_id": contact_id, 'address_id': self.kwargs['address_id']},
+                kwargs={
+                    "customer_id": self.kwargs["customer_id"],
+                    "contact_id": contact_id,
+                    "address_id": self.kwargs["address_id"],
+                },
             )
         )
 
@@ -383,7 +399,7 @@ class OfferChangeContact(views.View):
 class OfferChangeAddress(views.View):
     def get(self, request, **kwargs):
         form = forms.AddressChangeForm(
-            models.Customer.objects.get(pk=self.kwargs['customer_id']),
+            models.Customer.objects.get(pk=self.kwargs["customer_id"]),
         )
         ctx = {"address_select_form": form, **kwargs}
         return render(request, "opakowania/select_field.html", ctx)
@@ -394,6 +410,35 @@ class OfferChangeAddress(views.View):
         return HttpResponseRedirect(
             reverse(
                 "add-offer",
-                kwargs={"customer_id": self.kwargs['customer_id'],"contact_id": self.kwargs['contact_id'], "address_id": address_id},
+                kwargs={
+                    "customer_id": self.kwargs["customer_id"],
+                    "contact_id": self.kwargs["contact_id"],
+                    "address_id": address_id,
+                },
             )
         )
+
+
+class OfferEditView(views.View):
+    def get(self, request, **kwargs):
+        offer = models.Offer.objects.get(pk=self.kwargs["offer_id"])
+        ctx = {"offer": offer}
+        return render(request, "opakowania/offer_edit.html", ctx)
+
+
+class AddPositionView(views.View):
+    def get(self, request, **kwargs):
+        offer = models.Offer.objects.get(pk=self.kwargs["offer_id"])
+        customer = offer.customer
+        contact = offer.customerContact
+        address = offer.customerAddress
+        form = forms.AddPositionForm(offer, customer,
+            initial={
+                "primary": True,
+                "contactPerson": contact,
+                "deliveryAddress": address,
+            }
+        )
+
+        ctx = {"form": form, "offer": offer}
+        return render(request, "opakowania/product_add.html", ctx)

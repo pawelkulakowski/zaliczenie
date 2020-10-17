@@ -66,7 +66,6 @@ urlpatterns = [
         views.AddressDeleteModalView.as_view(),
         name="customer-delete-address",
     ),
-  
     re_path(
         r"^customer/(?P<customer_id>\d+)/add-offer/(?P<contact_id>\d+)/(?P<address_id>\d+)/$",
         views.OfferNewView.as_view(),
@@ -82,4 +81,10 @@ urlpatterns = [
         views.OfferChangeAddress.as_view(),
         name="offer-change-address",
     ),
+    path(
+        "customer/<int:customer_id>/edit-offer/<int:offer_id>",
+        views.OfferEditView.as_view(),
+        name="offer-edit",
+    ),
+    path("customer/<int:customer_id>/edit-offer/<int:offer_id>/add-position", views.AddPositionView.as_view(), name='position-add')
 ]

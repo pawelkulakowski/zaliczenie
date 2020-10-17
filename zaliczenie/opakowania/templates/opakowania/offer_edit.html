@@ -1,0 +1,65 @@
+{% extends "opakowania/base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}
+Oferta {{ offer.signature }}
+{% endblock %}
+
+{% block navigation%}
+<div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item">
+            <a class="disabled-link nav-link " href="" tabindex="-1">Start</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link disabled-link" href="" tabindex="-1">Nowy klient</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link disabled-link" href="" tabindex="-1">Szukaj klienta</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="#" tabindex="-1">Edytuj ofertę</a>
+        </li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div class="card" style="height: 85vh;">
+            <div id="offerContent" class="card-body bg-secondary">
+
+            </div>
+        </div>
+    </div>
+    <div class="col-3">
+        <div class="row form-group">
+            <div class="col-4">
+                <a id="nowaPozycjaBtn" href="{% url 'position-add' offer.customer.id offer.id %}" class="btn btn-outline-info btn-lg" role="button"
+                    aria-disabled="true">Nowa
+                    pozycja</a>
+            </div>
+
+            <div class="col-4">
+                <a href="" class="btn btn-outline-info btn-lg" role="button">Zamknij
+                    ofertę</a>
+            </div>
+
+            <div class="col-4">
+                <a href="" class="btn btn-outline-info btn-lg" role="button">Zamknij
+                    ofertę</a>
+            </div>
+        </div>
+        <div class="row form-group">
+            <div class="col-12"><a href="{% url 'customer-search' %}"
+                    class="btn btn-outline-danger btn-md btn-block ">Zamknij ofertę</a>
+            </div>
+        </div>
+    </div>
+
+</div>
+<div id="modalContainer"></div>
+
+{% endblock %}

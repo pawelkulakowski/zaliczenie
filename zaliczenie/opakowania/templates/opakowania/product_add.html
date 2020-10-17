@@ -1,0 +1,125 @@
+{% extends "opakowania/base.html" %}
+
+{% load crispy_forms_tags %}
+
+{% block title %}
+Oferta {{ offer.signature }}
+{% endblock %}
+
+{% block navigation%}
+<div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item">
+            <a class="disabled-link nav-link " href="" tabindex="-1">Start</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link disabled-link" href="" tabindex="-1">Nowy klient</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link disabled-link" href="" tabindex="-1">Szukaj klienta</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="#" tabindex="-1">Dodaj produkt</a>
+        </li>
+    </ul>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div class="card border-dark">
+            <form method="POST">
+                {% csrf_token %}
+                <div class="card-header bg-dark">
+                    <div class="d-flex justify-content-between">
+                        <div class="h3 p-0 m-0 text-white">Informacje podstawowe</div>
+                        {% if form.primary %}
+                        <div class="h3 p-0 m-0 text-warning">
+                            {{ form.primary|as_crispy_field }}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                </div>
+
+
+                <div class="card-body bg-white">
+                    <div class="row">
+                        <div class="col-4">{{ form.name|as_crispy_field }}</div>
+                        <div class="col-4">{{ form.innerIndex|as_crispy_field }}</div>
+                        <div class="col-4">{{ form.outsideIndex|as_crispy_field }}</div>
+                    </div>
+                    <hr class="hr-p-5 hr-m-0">
+                    <div class="row">
+                        <div class="col-3">
+                            {{ form.form|as_crispy_field }}
+                            {{ form.laminating|as_crispy_field }}
+                            {{ form.solid|as_crispy_field }}</div>
+
+                        <div class="col-3">
+                            {{ form.flexoOverprint|as_crispy_field }}
+                            {{ form.offsetOverprint|as_crispy_field }}
+                            {{ form.refinement|as_crispy_field }}</div>
+                    </div>
+                    <hr class="hr-p-5 hr-m-0">
+
+                    <div class="row">
+                        <div class="col-2">{{ form.gluedJoin|as_crispy_field }}</div>
+                        <div class="col-2">{{ form.sewnJoin|as_crispy_field }}</div>
+                        <div class="col-2">{{ form.mixedJoin|as_crispy_field }}</div>
+                        <div class="col-6">{{ form.commentJoin|as_crispy_field }}</div>
+                    </div>
+                    <hr class="hr-p-5 hr-m-0">
+                    <div class="row">
+                        <div class="col-2">
+                            {{ form.length|as_crispy_field }}
+                            {{ form.width|as_crispy_field }}
+                            {{ form.height|as_crispy_field }}
+                        </div>
+                        <div class="col-2">
+                            {{ form.sizeType|as_crispy_field }}
+                            {{ form.numberOfElements|as_crispy_field }}
+                        </div>
+                        <div class="col-2">
+                            {{ form.deliveryVariantOne|as_crispy_field }}
+                            {{ form.deliveryVariantTwo|as_crispy_field }}
+                            {{ form.deliveryVariantThree|as_crispy_field }}
+                            {{ form.deliveryYearly|as_crispy_field }}
+                        </div>
+                        <div class="col-6">
+                            <div class="row">
+                                <div class="col-12">
+                                    {{ form.comments|as_crispy_field }}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-12">
+                                    {{ form.contactPerson|as_crispy_field }}
+                                    {{ form.deliveryAddress|as_crispy_field }}
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+                <div class="card-footer bg-light">
+                    <div class="row">
+                        <div class="col-6"><a href="{% url 'customer-search' %}"
+                                class="btn btn-outline-success btn-md btn-block ">Dodaj</a></div>
+                        <div class="col-6">
+                            <a href="{% url 'customer-search' %}"
+                                class="btn btn-outline-danger btn-md btn-block ">Anuluj</a></div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+
+</div>
+<div id="modalContainer"></div>
+
+{% endblock %}
