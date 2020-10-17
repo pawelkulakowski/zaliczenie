@@ -1,10 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
     var btn = this.getElementById('addContactBtn')
 
-    // $("#addContactBtn").click(function () {
-    //     $("#staticBackdrop").modal();
-    // });
-
+    $('.disabled').click(function (e) {
+        e.preventDefault();
+    });
 
     $("body").on('click', ".generic-modal", function (e) {
         e.preventDefault();
@@ -29,19 +28,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
     $("body").on('click', ".offerContactList", function (e) {
         e.preventDefault();
-        console.log(this.href);
-
         $.get(this.href, function (data) {
             $('#offerContactListContainer').html(data);
         });
     });
 
+    $("body").on('click', ".offerContactList-hide", function (e) {
+        e.preventDefault();
+        $.get(this.href, function (data) {
+            $('#offerContactListContainer').empty();
+        });
+    });
+
     $("body").on('click', ".offerAddressList", function (e) {
         e.preventDefault();
-        console.log(this.href);
-
         $.get(this.href, function (data) {
             $('#offerAddressListContainer').html(data);
+        });
+    });
+
+    $("body").on('click', ".offerAddressList-hide", function (e) {
+        e.preventDefault();
+        $.get(this.href, function (data) {
+            $('#offerAddressListContainer').empty();
         });
     });
 
@@ -52,6 +61,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     $('[data-toggle=tooltip]').tooltip({ delay: { "show": 200, "hide": 100 } });
+
 
 
     //this changes delay time for hyperlink icons

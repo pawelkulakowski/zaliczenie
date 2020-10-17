@@ -9,7 +9,8 @@
 <form method="POST" action="{% url 'offer-change-contact' customer_id contact_id address_id %}">
     {{ contact_select_form|crispy }}
     {% csrf_token %}
-    <input type="submit" class="btn btn-primary" value="Zapisz">
+    <input type="submit" class="btn btn-outline-success" value="Zapisz">
+    <button type="button" class="offerContactList-hide btn btn-outline-danger">Zamknij</button>
 </form>
 {% endif %}
 
@@ -18,7 +19,8 @@
 <form method="POST" action="{% url 'offer-change-address' customer_id contact_id address_id %}">
 {{ address_select_form|crispy }}
 {% csrf_token %}
-<input type="submit" class="btn btn-primary" value="Zapisz">
+<input type="submit" class="btn btn-outline-success" value="Zapisz">
+<button type="button" class="offerAddressList-hide btn btn-outline-danger">Zamknij</button>
 
 </form>
 {% endif %}

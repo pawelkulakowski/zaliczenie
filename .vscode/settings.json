@@ -1,0 +1,14 @@
+{
+    "python.linting.enabled": true,
+    "python.linting.pylintArgs": [
+        "--load-plugins",
+        "pylint_django",
+        "--disable=C0111",
+        "--ignored-argument-names=^args$|^kwargs$"
+    ],
+    "python.formatting.provider": "black",
+    "editor.rulers": [
+        88
+    ],
+    "python.linting.pylintEnabled": true
+}

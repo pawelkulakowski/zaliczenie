@@ -1,7 +1,8 @@
 from django.db import models
 from opakowania import validators
 from django import forms
-
+from datetime import date
+from django.utils import timezone, dateformat
 
 class Customer(models.Model):
     customer_name = models.CharField(
@@ -72,19 +73,22 @@ class User(models.Model):
 
 
 class Offer(models.Model):
+    def now_plus_month():
+        return dateformat.format(timezone.now() + timezone.timedelta(days=30), 'd-m-Y')
+
     STATUS = ((1, "Nowa"),)
     signature = models.CharField(max_length=64, null=False)
     createdBy = models.ForeignKey(
         User, null=True, on_delete=models.SET_NULL, related_name="createdBy"
     )
-    comments = models.TextField()
-    created = models.DateTimeField(auto_now_add=True)
-    status = models.IntegerField(choices=STATUS, default=1)
-    # expirationDate = models.DateField(null=False)
+    comments = models.TextField(verbose_name="Komentarz")
+    created = models.DateTimeField(auto_now_add=True, verbose_name="Data utworzenia")
+    status = models.IntegerField(choices=STATUS, default=1, verbose_name="Status")
+    expirationDate = models.DateField(null=False, default=now_plus_month, verbose_name="Data wygaśnięcia")
     customerContact = models.ForeignKey(Contact, null=True, on_delete=models.SET_NULL)
     customerAddress = models.ForeignKey(Address, null=True, on_delete=models.SET_NULL)
     customer = models.ForeignKey(Customer, null=False, on_delete=models.PROTECT)
-    itemsCount = models.IntegerField(null=True, default=0)
+    itemsCount = models.IntegerField(null=True, default=0, verbose_name="Ilość produktów")
     calculationUser = models.ForeignKey(
         User, null=True, on_delete=models.SET_NULL, related_name="calculationUser"
     )

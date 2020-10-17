@@ -6,158 +6,206 @@
 Witaj
 {% endblock %}
 
+{% block navigation%}
+<div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item">
+            <a class="disabled-link nav-link " href="" tabindex="-1">Start</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link disabled-link" href="" tabindex="-1">Nowy klient</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link disabled-link" href="" tabindex="-1">Szukaj klienta</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="#" tabindex="-1">Edytuj klienta</a>
+        </li>
+    </ul>
+</div>
+{% endblock %}
+
 {% block content %}
-
-
-
-<div class="row col-12">{{ customer_form.non_field_errors }}</div>
-<div class="h2">Podaj dane klienta, dane kontaktowe i adresowe</div>
-<hr>
-<div class="row col-12">
+<div class="row justify-content-center">
     <div class="col-3">
-        <form action="" method="post">
-            {% csrf_token %}
-            <div class="h3">Dane klienta</div>
-            <div class="col-12">{{ customer_form.customer_name|as_crispy_field }}</div>
-            <div class="col-12">{{ customer_form.tax_code|as_crispy_field }}</div>
-            <div class="col-12">{{ customer_form.description|as_crispy_field }}</div>
-            <input type="submit" value="Zapisz zmiany" class="btn btn-info btn-lg btn-block">
-            <a href="{% url 'customer-add-contact' customer_form.instance.id%}"
-                class="generic-modal btn btn-info btn-lg btn-block">Dodaj kontakt</a>
+        <div class="card text-dark bg-white border-dark" style="height: 100%;">
+            <div class="card-header bg-dark text-white">
+                <div class="h3 p-0">DANE KLIENTA</div>
+            </div>
+            <form action="" method="post">
+                {% csrf_token %}
+                <div class="card-body">
+                    <div class="col-12">{{ customer_form.customer_name|as_crispy_field }}</div>
+                    <div class="col-12">{{ customer_form.tax_code|as_crispy_field }}</div>
+                    <div class="col-12">{{ customer_form.description|as_crispy_field }}</div>
+                </div>
 
-            <a href="{% url 'customer-add-address' customer_form.instance.id%}"
-                class="generic-modal btn btn-info btn-lg btn-block">Dodaj adres</a>
-        </form>
+                <div class="card-footer">
+                    <input type="submit" value="Zapisz zmiany" class="btn btn-outline-success btn-md btn-block">
 
+                    <a href="{% url 'customer-search' %}" class="btn btn-outline-danger btn-md btn-block">Anuluj</a>
+
+                    <!-- 
+                    <a href="{% url 'customer-add-address' customer_form.instance.id%}"
+                        class="generic-modal btn btn-outline-info btn-md btn-block">Dodaj adres</a> -->
+                </div>
+
+            </form>
+        </div>
     </div>
-    <div class="col-9">
-        <div class="row col-12">
-            <div class="row col-12">
-                <div class="h3 col-12">Kontakty</div>
-                <div class="table-wrapper-scroll-y my-custom-scrollbar col-12">
-                    <table class="table table-sm table-striped table-borderless">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th scope="col" class="th-sm" style="width:10%">Imię i nazwisko</th>
-                                <th scope="col" class="th-sm" style="width:10%">Stanowisko</th>
-                                <th scope="col" class="th-sm">Email</th>
-                                <th scope="col" class="th-sm">Telefon</th>
-                                <th scope="col" class="th-sm">Główny</th>
-                                <th scope="col" class="th-sm"></th> <!-- edit -->
-                                <th scope="col" class="th-sm"></th> <!-- set primary -->
-                                <th scope="col" class="th-sm"></th> <!-- delete -->
 
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for contact in contacts %}
-                            {% if contact.primary %}
-                            <tr class="font-weight-bold">
-                                <td>{{ contact.name }}</td>
-                                <td>{{ contact.position }}</td>
-                                <td>{{ contact.email }}</td>
-                                <td>{{ contact.phone }}</td>
-                                <td>Tak</td>
-                                <td><a class="generic-modal text-info" data-toggle="tooltip" data-placement="right"
-                                        title="Edytuj kontakt"
-                                        href="{% url 'customer-edit-contact' customer_form.instance.id contact.id %}"><i
-                                            class="fas fa-user-edit"></i></a></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            {%else%}
-                            <tr>
-                                <td>{{ contact.name }}</td>
-                                <td>{{ contact.position }}</td>
-                                <td>{{ contact.email }}</td>
-                                <td>{{ contact.phone }}</td>
-                                <td>Nie</td>
-                                <td><a class="generic-modal text-info" data-toggle="tooltip" data-placement="right"
-                                        title="Edytuj kontakt"
-                                        href="{% url 'customer-edit-contact' customer_form.instance.id contact.id %}"><i
-                                            class="fas fa-user-edit"></i></a>
-                                </td>
-                                <td><a class="text-info" data-toggle="tooltip" data-placement="right"
-                                        title="Ustaw jako główny"
-                                        href="{% url 'contact-set-primary' customer_form.instance.id contact.id %}"><i
-                                            class="fas fa-users"></i>
-                                    </a></td>
-                                <td><a class="generic-modal text-info" data-toggle="tooltip" data-placement="right" title="Usuń"
-                                        href="{% url 'customer-delete-contact' customer_form.instance.id contact.id %}"><i
-                                            class="fas fa-user-minus"></i></a></td>
+    <div class="col-8">
+        <div class="row mb-2">
+            <div class="card text-dark bg-white border-dark p-0" style="width: 100%;height: 300px;">
 
-                            </tr>
-                            {% endif %}
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                <div class="card-header bg-dark text-white">
+                    <div class="d-flex justify-content-between">
+                        <div class="h3 p-0">KONTAKTY</div>
+                        <div class="">
+                            <a href="{% url 'customer-add-contact' customer_form.instance.id%}"
+                                class="generic-modal btn btn-outline-info btn-md">Dodaj kontakt</a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-body p-0" style="height: 100%;">
+                    <div class="table-wrapper-scroll-y my-custom-scrollbar p-0" style="height: 75%;">
+                        <table class="table table-sm table-borderless">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col" class="th-sm th-sticky" style="width:20%">Imię i nazwisko</th>
+                                    <th scope="col" class="th-sm th-sticky" style="width:15%">Stanowisko</th>
+                                    <th scope="col" class="th-sm th-sticky" style="width:30%">Email</th>
+                                    <th scope="col" class="th-sm th-sticky" style="width:10%">Telefon</th>
+                                    <th scope="col" class="th-sm th-sticky" style="width:10%">Główny</th>
+                                    <th scope="col" class="th-sm th-sticky" style="width:5%"></th> <!-- edit -->
+                                    <th scope="col" class="th-sm th-sticky" style="width:5%"></th>
+                                    <!-- set primary -->
+                                    <th scope="col" class="th-sm th-sticky" style="width:5%"></th> <!-- delete -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for contact in contacts %}
+                                {% if contact.primary %}
+                                <tr class="font-weight-bold">
+                                    <td>{{ contact.name }}</td>
+                                    <td>{{ contact.position }}</td>
+                                    <td>{{ contact.email }}</td>
+                                    <td>{{ contact.phone }}</td>
+                                    <td>Tak</td>
+                                    <td><a class="generic-modal text-info" data-toggle="tooltip" data-placement="right"
+                                            title="Edytuj kontakt"
+                                            href="{% url 'customer-edit-contact' customer_form.instance.id contact.id %}"><i
+                                                class="fas fa-user-edit"></i></a></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                {%else%}
+                                <tr>
+                                    <td>{{ contact.name }}</td>
+                                    <td>{{ contact.position }}</td>
+                                    <td>{{ contact.email }}</td>
+                                    <td>{{ contact.phone }}</td>
+                                    <td>Nie</td>
+                                    <td><a class="generic-modal text-info" data-toggle="tooltip" data-placement="right"
+                                            title="Edytuj kontakt"
+                                            href="{% url 'customer-edit-contact' customer_form.instance.id contact.id %}"><i
+                                                class="fas fa-user-edit"></i></a>
+                                    </td>
+                                    <td><a class="text-info" data-toggle="tooltip" data-placement="right"
+                                            title="Ustaw jako główny"
+                                            href="{% url 'contact-set-primary' customer_form.instance.id contact.id %}"><i
+                                                class="fas fa-users"></i>
+                                        </a></td>
+                                    <td><a class="generic-modal text-info" data-toggle="tooltip" data-placement="right"
+                                            title="Usuń"
+                                            href="{% url 'customer-delete-contact' customer_form.instance.id contact.id %}"><i
+                                                class="fas fa-user-minus"></i></a></td>
+
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
-        <hr>
-        <hr>
-        <div class="row col-12">
-            <div class="row col-12">
-                <div class="h3 col-12">Adresy</div>
-                <div class="table-wrapper-scroll-y my-custom-scrollbar col-12">
-                    <table class="table table-sm table-striped table-borderless">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th scope="col">Adres</th>
-                                <th scope="col">Miejscowość</th>
-                                <th scope="col">Kod pocztowy</th>
-                                <th scope="col" class="th-sm">Główny</th>
-                                <th scope="col" class="th-sm"></th> <!-- edit -->
-                                <th scope="col" class="th-sm"></th> <!-- set primary -->
-                                <th scope="col" class="th-sm"></th> <!-- delete -->
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for address in addresses %}
-                            {% if address.primary %}
-                            <tr class="font-weight-bold">
-                                <td>{{ address.address }}</td>
-                                <td>{{ address.city }}</td>
-                                <td>{{ address.zip_code }}</td>
-                                <td>Tak</td>
-                                <td><a class="generic-modal text-info" data-toggle="tooltip" data-placement="right"
-                                        title="Edytuj adres"
-                                        href="{% url 'customer-edit-address' customer_form.instance.id address.id %}"><i
-                                            class="fas fa-user-edit"></i></a></td>
-                                <td></td>
-                                <td></td>
-                            </tr>
-                            {% else %}
-                            <tr>
-                                <td>{{ address.address }}</td>
-                                <td>{{ address.city }}</td>
-                                <td>{{ address.zip_code }}</td>
-                                <td>Nie</td>
-                                <td><a class="generic-modal text-info" data-toggle="tooltip" data-placement="right"
-                                        title="Edytuj adres"
-                                        href="{% url 'customer-edit-address' customer_form.instance.id address.id %}"><i
-                                            class="fas fa-user-edit"></i></a>
-                                </td>
-                                <td><a class="text-info" data-toggle="tooltip" data-placement="right"
-                                        title="Ustaw jako główny"
-                                        href="{% url 'address-set-primary' customer_form.instance.id address.id %}"><i
-                                            class="fas fa-users"></i>
-                                    </a></td>
-                                <td><a class="generic-modal text-info" data-toggle="tooltip" data-placement="right"
-                                        title="usuń kontakt"
-                                        href="{% url 'customer-delete-address' customer_form.instance.id address.id %}"><i
-                                            class="fas fa-user-minus"></i></a></td>
-                            </tr>
-                            {% endif %}
-                            {% endfor %}
-                        </tbody>
-                    </table>
+
+        <div class="row">
+            <div class="card text-dark bg-white border-dark p-0" style="width: 100%;height: 300px;">
+
+                <div class="card-header bg-dark text-white">
+                    <div class="d-flex justify-content-between">
+                        <div class="h3 p-0">ADRESY</div>
+                        <div class="">
+                            <a href="{% url 'customer-add-address' customer_form.instance.id%}"
+                                class="generic-modal btn btn-outline-info btn-md btn-block">Dodaj adres</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body p-0" style="height: 100%;">
+                    <div class="table-wrapper-scroll-y my-custom-scrollbar p-0" style="height: 75%;">
+                        <table class="table table-sm table-borderless">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col" style="width:35%">Adres</th>
+                                    <th scope="col" style="width:25%">Miejscowość</th>
+                                    <th scope="col" style="width:15%">Kod pocztowy</th>
+                                    <th scope="col" class="th-sm" style="width:10%">Główny</th>
+                                    <th scope="col" class="th-sm" style="width:5%"></th> <!-- edit -->
+                                    <th scope="col" class="th-sm" style="width:5%"></th> <!-- set primary -->
+                                    <th scope="col" class="th-sm" style="width:5%"></th> <!-- delete -->
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for address in addresses %}
+                                {% if address.primary %}
+                                <tr class="font-weight-bold">
+                                    <td>{{ address.address }}</td>
+                                    <td>{{ address.city }}</td>
+                                    <td>{{ address.zip_code }}</td>
+                                    <td>Tak</td>
+                                    <td><a class="generic-modal text-info" data-toggle="tooltip" data-placement="right"
+                                            title="Edytuj adres"
+                                            href="{% url 'customer-edit-address' customer_form.instance.id address.id %}"><i
+                                                class="fas fa-user-edit"></i></a></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                {% else %}
+                                <tr>
+                                    <td>{{ address.address }}</td>
+                                    <td>{{ address.city }}</td>
+                                    <td>{{ address.zip_code }}</td>
+                                    <td>Nie</td>
+                                    <td><a class="generic-modal text-info" data-toggle="tooltip" data-placement="right"
+                                            title="Edytuj adres"
+                                            href="{% url 'customer-edit-address' customer_form.instance.id address.id %}"><i
+                                                class="fas fa-user-edit"></i></a>
+                                    </td>
+                                    <td><a class="text-info" data-toggle="tooltip" data-placement="right"
+                                            title="Ustaw jako główny"
+                                            href="{% url 'address-set-primary' customer_form.instance.id address.id %}"><i
+                                                class="fas fa-users"></i>
+                                        </a></td>
+                                    <td><a class="generic-modal text-info" data-toggle="tooltip" data-placement="right"
+                                            title="usuń kontakt"
+                                            href="{% url 'customer-delete-address' customer_form.instance.id address.id %}"><i
+                                                class="fas fa-user-minus"></i></a></td>
+                                </tr>
+                                {% endif %}
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
 
     </div>
 </div>
+
 <div id="modalContainer"></div>
 
 {% endblock %}

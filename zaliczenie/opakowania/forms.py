@@ -145,3 +145,8 @@ class AddressChangeForm(forms.Form):
     addressList = models.AddressChoiceField(
         queryset=None, label="Wybierz nowy adres z listy", initial=1
     )
+
+
+class OfferCommentForm(forms.Form):
+    comments = forms.CharField(widget=forms.Textarea(attrs={'rows': 6, 'cols': 40, 'spellcheck': 'true'}), required=False)
+        

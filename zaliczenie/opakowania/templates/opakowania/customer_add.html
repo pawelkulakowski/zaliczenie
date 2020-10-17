@@ -6,43 +6,73 @@
 Witaj
 {% endblock %}
 
-{% block content %}
-<div class="h2">Podaj dane klienta, dane kontaktowe i adresowe</div>
-<hr>
-<form action="" method="post">
-    {% csrf_token %}
+{% block navigation%}
 
+    <div class="card-header">
+        <ul class="nav nav-tabs card-header-tabs">
+            <li class="nav-item">
+                <a class="nav-link" href="/">Start</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link active" href="{% url 'customer-add' %}">Nowy klient</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="{% url 'customer-search' %}">Szukaj klienta</a>
+            </li>
+        </ul>
+    </div>
+    {% endblock %}
+
+    {% block content %}
     <div class="row col-12">{{ customer_form.non_field_errors }}</div>
-    <div class="row col-12">
-        <div class="col-4">
-            <fieldset>
-                <legend>Dane klienta</legend>
-                <div class="col-12">{{ customer_form.customer_name|as_crispy_field }}</div>
-                <div class="col-12">{{ customer_form.tax_code|as_crispy_field }}</div>
-                <div class="col-12">{{ customer_form.description|as_crispy_field }}</div>
-            </fieldset>
-        </div>
-        <div class="col-4">
-            <fieldset>
-                <legend>Dane adresow</legend>
-                <div class="col-12">{{ address_form.zip_code|as_crispy_field }}</div>
-                <div class="col-12">{{ address_form.city|as_crispy_field }}</div>
-                <div class="col-12">{{ address_form.address|as_crispy_field }}</div>
-            </fieldset>
-        </div>
-        <div class="col-4">
-            <fieldset>
-                <legend>Dane kontaktowe</legend>
-                <div class="col-12">{{ contact_form.name|as_crispy_field }}</div>
-                <div class="col-12">{{ contact_form.phone|as_crispy_field }}</div>
-                <div class="col-12">{{ contact_form.email|as_crispy_field }}</div>
-                <div class="col-12">{{ contact_form.position|as_crispy_field }}</div>
-            </fieldset>
-        </div>
-        <input type="submit" value="Dodaj" class="btn btn-secondary btn-lg btn-block">
-</form>
+    <form action="" method="post">
+        {% csrf_token %}
+        <div class="row justify-content-center">
+            <div class="col-3">
+                <div class="card text-dark bg-white border-dark mb-3" style="height: 97%;">
+                    <div class="card-header bg-dark text-white">Dane Klienta</div>
+                    <div class="card-body">
+                        <div class="col-12">{{ customer_form.customer_name|as_crispy_field }}</div>
+                        <div class="col-12">{{ customer_form.tax_code|as_crispy_field }}</div>
+                        <div class="col-12">{{ customer_form.description|as_crispy_field }}</div>
+                    </div>
+                </div>
+            </div>
 
-<br>
+            <div class="col-3">
+                <div class="card text-dark bg-white border-dark mb-3" style="height: 97%;">
+                    <div class="card-header bg-dark text-white">Dane adresowe</div>
+                    <div class="card-body">
+                        <div class="col-12">{{ address_form.zip_code|as_crispy_field }}</div>
+                        <div class="col-12">{{ address_form.city|as_crispy_field }}</div>
+                        <div class="col-12">{{ address_form.address|as_crispy_field }}</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-3">
+                <div class="card text-dark bg-white border-dark mb-3" style="height: 97%;">
+                    <div class="card-header bg-dark text-white">Dane kontaktowe</div>
+                    <div class="card-body">
+                        <div class="col-12">{{ contact_form.name|as_crispy_field }}</div>
+                        <div class="col-12">{{ contact_form.phone|as_crispy_field }}</div>
+                        <div class="col-12">{{ contact_form.email|as_crispy_field }}</div>
+                        <div class="col-12">{{ contact_form.position|as_crispy_field }}</div>
+                        </fieldset>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-9">
+                <input type="submit" value="Dodaj" class="btn btn-secondary btn-lg btn-block">
+            </div>
+        </div>
+
+    </form>
+
+    <br>
 
 
-{% endblock %}
+    {% endblock %}

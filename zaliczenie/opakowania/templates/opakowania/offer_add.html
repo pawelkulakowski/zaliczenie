@@ -6,60 +6,142 @@
 Nowa oferta dla {{ customer.customer_name }}
 {% endblock %}
 
+{% block navigation%}
+<div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item">
+            <a class="disabled-link nav-link " href="" tabindex="-1">Start</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link disabled-link" href="" tabindex="-1">Nowy klient</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link disabled-link" href="" tabindex="-1">Szukaj klienta</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="#" tabindex="-1">Dodaj ofertę</a>
+        </li>
+    </ul>
+</div>
+{% endblock %}
+
 {% block content %}
 <div class="row justify-content-center">
-
-    <div class="col-8 ">
-        <div class="card text-white bg-dark mb-3">
-            <div class="card-header">Dane Klienta</div>
+    <div class="col-3">
+        <div class="card text-dark bg-white border-dark mb-3" style="height: 97.5%;">
+            <div class="card-header bg-dark text-white">Dane oferty</div>
             <div class="card-body">
-                <ul>
-                    <li>Nazwa: {{ customer.customer_name }}</li>
-                    <li>NIP: {{ customer.tax_code }}</li>
-                </ul>
+                <table class="table table-sm">
+                    <tr>
+                        <td>Sygnatura</td>
+                        <td>{{ offer.signature }}</td>
+                    </tr>
+                    <tr>
+                        <td>Status</td>
+                        <td>{{ offer.get_status_display }}</td>
+                    </tr>
+                    <tr>
+                        <td>Data wygaśnięcia</td>
+                        <td>{{ offer.expirationDate }}</td>
+                    </tr>
+                    <tr>
+                        <td>Komentarz</td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                            <form id="offerCommentForm" class="form" method="post">
+                                {% csrf_token %}
+                                {{ commentForm|crispy}}
+                            </form>
+                        </td>
+                    </tr>
+
+                </table>
+            </div>
+            <div class="card-footer">
+                <a href="#" onclick="document.forms['offerCommentForm'].submit();" class="btn btn-outline-success btn-md btn-block">Zatwierdź</a>
+
+                <a href="{% url 'customer-search' %}" class="btn btn-outline-danger btn-md btn-block">Anuluj</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-5">
+        <div class="card text-dark bg-white border-dark mb-3">
+            <div class="card-header bg-dark text-white">Dane Klienta</div>
+            <div class="card-body">
+                <table class="table table-sm">
+                    <tr>
+                        <td style="width: 20%;">Nazwa</td>
+                        <td>{{ customer.customer_name }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 20%;">NIP</td>
+                        <td>{{ customer.tax_code }}</td>
+                    </tr>
+                </table>
             </div>
         </div>
 
-        <div class="card text-white bg-dark mb-3">
-            <div class="card-header">Dane kontaktowe</div>
+        <div class="card text-dark bg-white border-dark mb-3">
+            <div class="card-header bg-dark text-white">Dane kontaktowe</div>
             <div class="card-body">
-                <ul>
-                    <li>Imię i nazwisko: {{ contact.name }}</li>
-                    <li>Stanowisko: {{ contact.position }}</li>
+                <table class="table table-sm">
+                    <tr>
+                        <td style="width: 20%;">Imię i nazwisko</td>
+                        <td>{{ contact.name }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 20%;">Stanowisko</td>
+                        <td>{{ contact.position }}</td>
+                    </tr>
                     {% if contact.phone %}
-                    <li>Telefon: {{ contact.phone }}</li>
+                    <tr>
+                        <td style="width: 20%;">Telefon</td>
+                        <td>{{ contact.phone }}</td>
+                    </tr>
                     {% endif %}
                     {% if contact.email %}
-                    <li>Email: {{ contact.email }}</li>
+                    <tr>
+                        <td style="width: 20%;">Email</td>
+                        <td>{{ contact.email }}</td>
+                    </tr>
                     {% endif %}
-                </ul>
+                </table>
                 <p class="card-text">
                     <a href="{% url 'customer-add-contact' customer.id %}"
-                        class="generic-modal btn btn-info btn-sm">Dodaj
+                        class="generic-modal btn btn-outline-info btn-md">Dodaj
                         kontakt</a>
                     <a href="{% url 'offer-change-contact' customer.id contact.id address.id %}"
-                        class="offerContactList btn btn-info btn-sm">Pokaż kontakty</a>
+                        class="offerContactList btn btn-outline-info btn-md">Pokaż kontakty</a>
                 </p>
                 <p class="card-text" id="offerContactListContainer"></p>
             </div>
-
-
         </div>
 
-        <div class="card text-white bg-dark mb-3">
-            <div class="card-header">Dane adresowe</div>
+        <div class="card text-dark bg-white border-dark mb-3">
+            <div class="card-header bg-dark text-white">Dane adresowe</div>
             <div class="card-body">
-                <ul>
-                    <li>Adres: {{ address.address }}</li>
-                    <li>Kod pocztowy: {{ address.zip_code }}</li>
-                    <li>Miejscowość: {{ address.city }}</li>
-                </ul>
+                <table class="table table-sm">
+                    <tr>
+                        <td style="width: 20%;">Adres</td>
+                        <td>{{ address.address }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 20%;">Kod pocztowy</td>
+                        <td>{{ address.zip_code }}</td>
+                    </tr>
+                    <tr>
+                        <td style="width: 20%;">Miejscowość</td>
+                        <td>{{ address.city }}</td>
+                    </tr>
+                </table>
                 <p class="card-text">
                     <a href="{% url 'customer-add-address' customer.id %}"
-                        class="generic-modal btn btn-info btn-sm">Dodaj
+                        class="generic-modal btn btn-outline-info btn-md">Dodaj
                         adres</a>
                     <a href="{% url 'offer-change-address' customer.id contact.id address.id %}"
-                        class="offerAddressList btn btn-info btn-sm">Pokaz adresy</a>
+                        class="offerAddressList btn btn-outline-info btn-md">Pokaz adresy</a>
                 </p>
                 <p class="card-text" id="offerAddressListContainer"></p>
             </div>
