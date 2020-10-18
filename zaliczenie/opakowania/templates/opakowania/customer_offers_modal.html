@@ -1,0 +1,34 @@
+{% load crispy_forms_tags %}
+
+<div id="staticBackdrop" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">{{ customer.customer_name }}</h5>
+                <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body modal-height-400 ">
+
+                <div class="list-group list-group-flush">
+                    {% for offer in customer.offer_set.all %}
+                    <a href="{% url 'offer-edit' customer.id offer.id %}" class="list-group-item list-group-item-action">{{ offer.signature }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="close-modal btn btn-secondary" data-dismiss="modal">Anuluj</button>
+                <input type="submit" class="btn btn-primary" value="Zapisz">
+            </div>
+        </div>
+    </div>
+  </div>
+
+
+<!-- <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog ">
+        
+    </div>
+</div> -->

@@ -29,6 +29,9 @@ Oferta {{ offer.signature }}
 <div class="row justify-content-center">
     <div class="col-8">
         <div class="card" style="height: 85vh;">
+            <div class="card-header">
+                <span class="h3">Oferta {{ offer.signature }}</span>
+            </div>
             <div id="offerContent" class="card-body bg-secondary">
 
             </div>
@@ -37,8 +40,8 @@ Oferta {{ offer.signature }}
     <div class="col-3">
         <div class="row form-group">
             <div class="col-4">
-                <a id="nowaPozycjaBtn" href="{% url 'position-add' offer.customer.id offer.id %}" class="btn btn-outline-info btn-lg" role="button"
-                    aria-disabled="true">Nowa
+                <a id="nowaPozycjaBtn" href="{% url 'position-add' offer.customer.id offer.id %}"
+                    class="btn btn-outline-info btn-lg" role="button" aria-disabled="true">Nowa
                     pozycja</a>
             </div>
 

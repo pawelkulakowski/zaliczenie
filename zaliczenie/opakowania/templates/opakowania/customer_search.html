@@ -7,79 +7,82 @@ Witaj
 {% endblock %}
 
 {% block navigation%}
-    <div class="card-header">
-        <ul class="nav nav-tabs card-header-tabs">
-            <li class="nav-item">
-                <a class="nav-link" href="/">Start</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link" href="{% url 'customer-add' %}">Nowy klient</a>
-            </li>
-            <li class="nav-item">
-                <a class="nav-link active" href="{% url 'customer-search' %}">Szukaj klienta</a>
-            </li>
-        </ul>
-    </div>
-    {% endblock %}
+<div class="card-header">
+    <ul class="nav nav-tabs card-header-tabs">
+        <li class="nav-item">
+            <a class="nav-link" href="/">Start</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'customer-add' %}">Nowy klient</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link active" href="{% url 'customer-search' %}">Szukaj klienta</a>
+        </li>
+    </ul>
+</div>
+{% endblock %}
 
-    {% block content %}
-    <div class="row justify-content-center">
-        <div class="col-8">
-            <div class="card text-dark bg-white border-dark mb-3">
-                <form method="POST">
-                    {% csrf_token %}
-                    <div class="card-body">
-                        <table class="table">
-                            <tr>
-                                <td>{{ form.customer_name|as_crispy_field }}</td>
-                                <td>{{ form.tax_code|as_crispy_field }}</td>
-                            </tr>
-                        </table>
-                        <p class="card-text text-danger">Brak parametrów wyszukiwania zwróci wszystkie rekordy z bazy
-                        </p>
-                    </div>
-                    <div class="card-footer">
-                        <input type="submit" value="Filtruj" class="btn btn-outline-success btn-lg btn-block">
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    <div class="row justify-content-center">
-        <div class="col-8">
-            <div class="card text-dark bg-white border-dark mb-3">
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div class="card text-dark bg-white border-dark mb-3">
+            <form method="POST">
+                {% csrf_token %}
                 <div class="card-body">
-                    <table class="table table-hover table-md table-striped text-center">
-                        <thead class="thead-dark">
-                            <tr>
-                                <th scope="col" style="width: 10%">#</th>
-                                <th scope="col" style="width: 50%">Nazwa</th>
-                                <th scope="col" style="width: 20%">Nip</th>
-                                <th scope="col" style="width: 10%"></th>
-                                <th scope="col" style="width: 10%"></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for customer in customers %}
-                            <tr>
-                                <th scope="row">{{ forloop.counter }}</th>
-                                <td><a class="btn btn-block btn-sm" href="#">{{ customer.customer_name }}</a></td>
-                                <td>{{ customer.tax_code }} </td>
-                                <td><a class="text-reset text-info" data-toggle="tooltip" data-placement="right"
-                                        title="Edytuj klienta" href="{% url 'customer-edit' customer.id %}"><i
-                                            class="fas fa-user-edit fa-lg"></i></a>
-                                </td>
-                                <td><a class="text-reset text-info" data-toggle="tooltip" data-placement="right"
-                                        title="Dodaj ofertę"
-                                        href="{% url 'add-offer' customer.id customer.get_primary_contact.id customer.get_primary_address.id %}"><i
-                                            class="fab fa-buffer fa-lg"></i></a></td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
+                    <table class="table">
+                        <tr>
+                            <td>{{ form.customer_name|as_crispy_field }}</td>
+                            <td>{{ form.tax_code|as_crispy_field }}</td>
+                        </tr>
                     </table>
+                    <p class="card-text text-danger">Brak parametrów wyszukiwania zwróci wszystkie rekordy z bazy
+                    </p>
                 </div>
+                <div class="card-footer">
+                    <input type="submit" value="Filtruj" class="btn btn-outline-success btn-lg btn-block">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div class="card text-dark bg-white border-dark mb-3">
+            <div class="card-body">
+                <table class="table table-hover table-md table-striped text-center">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col" style="width: 10%">#</th>
+                            <th scope="col" style="width: 50%">Nazwa</th>
+                            <th scope="col" style="width: 20%">Nip</th>
+                            <th scope="col" style="width: 10%"></th>
+                            <th scope="col" style="width: 10%"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for customer in customers %}
+                        <tr>
+                            <th scope="row">{{ forloop.counter }}</th>
+                            <td><a class=" generic-modal btn btn-block btn-sm"
+                                    href="{% url 'customer-offers' customer.id %}">{{ customer.customer_name }}</a></td>
+                            <td>{{ customer.tax_code }} </td>
+                            <td><a class="text-reset text-info" data-toggle="tooltip" data-placement="right"
+                                    title="Edytuj klienta" href="{% url 'customer-edit' customer.id %}"><i
+                                        class="fas fa-user-edit fa-lg"></i></a>
+                            </td>
+                            <td><a class="text-reset text-info" data-toggle="tooltip" data-placement="right"
+                                    title="Dodaj ofertę"
+                                    href="{% url 'add-offer' customer.id customer.get_primary_contact.id customer.get_primary_address.id %}"><i
+                                        class="fab fa-buffer fa-lg"></i></a></td>
+
+                            {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
-
-    {% endblock %}
+</div>
+<div id="modalContainer">
+    
+</div>
+{% endblock %}

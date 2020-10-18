@@ -75,18 +75,14 @@ class AddressNewForm(forms.ModelForm):
 
     class Meta:
         model = models.Address
-        fields = ["zip_code", "city", "address", "primary"]
+        fields = ["zip_code", "city", "address"]
 
 
 class ContactNewForm(forms.ModelForm):
     def clean_phone(self):
         phone = self.cleaned_data["phone"]
-        if (
-            phone != ""
-            and re.search("[0-9][0-9][0-9]-[0-9][0-9][0-9]-[0-9][0-9][0-9]", phone)
-            is None
-        ):
-            raise ValidationError("Numer telefonu powinien mieć format XXX-XXX-XXX")
+        if phone != "" and re.search("^\d{9}$", phone) is None:
+            raise ValidationError("Numer telefonu powinien mieć format XXXXXXXXX")
         return phone
 
     def clean(self):
@@ -110,7 +106,7 @@ class ContactNewForm(forms.ModelForm):
 
     class Meta:
         model = models.Contact
-        fields = ["name", "phone", "email", "position", "primary"]
+        fields = ["name", "phone", "email", "position"]
 
 
 class OfferNewForm(forms.ModelForm):
@@ -162,6 +158,7 @@ class AddPositionForm(forms.ModelForm):
             }
         ),
         label="Nazwa",
+        max_length=128,
     )
     innerIndex = forms.CharField(
         widget=forms.Textarea(
@@ -171,6 +168,7 @@ class AddPositionForm(forms.ModelForm):
         ),
         label="Indeks wewnętrzny",
         required=False,
+        max_length=128,
     )
     outsideIndex = forms.CharField(
         widget=forms.Textarea(
@@ -180,6 +178,7 @@ class AddPositionForm(forms.ModelForm):
         ),
         label="Indeks zewnętrzny",
         required=False,
+        max_length=128,
     )
     commentJoin = forms.CharField(
         widget=forms.Textarea(
@@ -197,40 +196,39 @@ class AddPositionForm(forms.ModelForm):
     )
     deliveryVariantOne = forms.IntegerField(
         widget=forms.NumberInput(attrs={"placeholder": "Wariant 1"}),
-        label='Dostawa',
-        required=False,
-        validators=[validators.positive_number_validator]
+        label="Dostawa",
+        required=True,
+        validators=[validators.positive_number_validator],
     )
     deliveryVariantTwo = forms.IntegerField(
         widget=forms.NumberInput(attrs={"placeholder": "Wariant 2"}),
         label=False,
         required=False,
-        validators=[validators.positive_number_validator]
+        validators=[validators.positive_number_validator],
     )
     deliveryVariantThree = forms.IntegerField(
         widget=forms.NumberInput(attrs={"placeholder": "Wariant 3"}),
         label=False,
         required=False,
-        validators=[validators.positive_number_validator]
+        validators=[validators.positive_number_validator],
     )
     deliveryYearly = forms.IntegerField(
         widget=forms.NumberInput(attrs={"placeholder": "Rocznie"}),
         label=False,
         required=False,
-        validators=[validators.positive_number_validator]
+        validators=[validators.positive_number_validator],
     )
-
 
     class Meta:
         model = models.Product
         fields = "__all__"
 
-    def __init__(self,offer,customer,  *args, **kwargs):
+    def __init__(self, offer, *args, **kwargs):
         super(AddPositionForm, self).__init__(*args, **kwargs)
-        self.fields['contactPerson'].queryset = customer.contact_set.all()
-        self.fields['contactPerson'].empty_label=None
-        self.fields['deliveryAddress'].queryset = customer.address_set.all()
-        self.fields['deliveryAddress'].empty_label = None
-        
+        self.fields["contactPerson"].queryset = offer.customer.contact_set.all()
+        self.fields["contactPerson"].empty_label = None
+        self.fields["deliveryAddress"].queryset = offer.customer.address_set.all()
+        self.fields["deliveryAddress"].empty_label = None
+
         for visible in self.visible_fields():
             visible.field.widget.attrs["class"] = "form-control-sm"

@@ -8,22 +8,31 @@
     display: block;
 }
 
-a.disabled-link{
+a.disabled-link {
     pointer-events: none;
     cursor: default;
     color: gray;
 }
 
 .btn {
-    white-space:normal !important; 
-    word-wrap: break-word; 
+    white-space: normal !important;
+    word-wrap: break-word;
     word-break: normal;
 }
 
-.hr-p-5{
-    padding: 5px;  
-  }
+.hr-p-5 {
+    padding: 5px;
+}
 
-.hr-m-0{
+.hr-m-0 {
     margin: 0px;
+}
+
+.modal-lg {
+    max-width: 1200px;
+}
+
+.modal-height-400 {
+    max-height: 400px;
+    overflow-y: auto
 }

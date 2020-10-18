@@ -36,7 +36,7 @@ Oferta {{ offer.signature }}
                         <div class="h3 p-0 m-0 text-white">Informacje podstawowe</div>
                         {% if form.primary %}
                         <div class="h3 p-0 m-0 text-warning">
-                            {{ form.primary|as_crispy_field }}
+                            Produkt główny
                         </div>
                         {% endif %}
                     </div>
@@ -106,10 +106,11 @@ Oferta {{ offer.signature }}
                 </div>
                 <div class="card-footer bg-light">
                     <div class="row">
-                        <div class="col-6"><a href="{% url 'customer-search' %}"
-                                class="btn btn-outline-success btn-md btn-block ">Dodaj</a></div>
                         <div class="col-6">
-                            <a href="{% url 'customer-search' %}"
+                            <input type="submit" value="Dodaj" class="btn btn-outline-success btn-md btn-block">
+                        </div>
+                        <div class="col-6">
+                            <a href="{% url 'offer-edit' offer.customer.id offer.id %}"
                                 class="btn btn-outline-danger btn-md btn-block ">Anuluj</a></div>
                     </div>
                 </div>

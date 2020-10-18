@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django import views
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, FormMixin, SingleObjectMixin
+from django.views.generic.list import ListView
 from opakowania import forms
 from opakowania import models
 from django.http import HttpResponse, HttpResponseRedirect
@@ -167,15 +168,17 @@ class ContactEditModalView(views.View):
     def post(self, request, customer_id, contact_id):
         contact = models.Contact.objects.get(pk=contact_id)
         contact_form = forms.ContactNewForm(request.POST, instance=contact)
-        ctx = {
-            "contact_form": contact_form,
-            "customer_id": customer_id,
-            "contact_id": contact_id,
-        }
+
         if contact_form.is_valid():
             customer = models.Customer.objects.get(pk=customer_id)
+            contact_form.cleaned_data["primary"] = contact.primary
             contact_form.save(customer)
         else:
+            ctx = {
+                "contact_form": contact_form,
+                "customer_id": customer_id,
+                "contact_id": contact_id,
+            }
             return render(
                 request, "opakowania/contact_edit_modal.html", ctx, status=400
             )
@@ -362,7 +365,9 @@ class OfferNewView(views.View):
         offer.signature = f"{year}/{month}/{offer_count + 1}"
 
         offer.save()
-        # return HttpResponse('działa')
+        messages.add_message(
+            request, messages.SUCCESS, "Oferta pomyślnie dodana do bazy"
+        )
         return redirect(
             reverse(
                 "offer-edit",
@@ -419,11 +424,25 @@ class OfferChangeAddress(views.View):
         )
 
 
-class OfferEditView(views.View):
-    def get(self, request, **kwargs):
-        offer = models.Offer.objects.get(pk=self.kwargs["offer_id"])
-        ctx = {"offer": offer}
-        return render(request, "opakowania/offer_edit.html", ctx)
+class OfferEditView(SingleObjectMixin, ListView):
+    # def get(self, request, **kwargs):
+    #     offer = models.Offer.objects.get(pk=self.kwargs["offer_id"])
+    #     ctx = {"offer": offer}
+    #     return render(request, "opakowania/offer_edit.html", ctx)
+    template_name = "opakowania/offer_edit.html"
+    pk_url_kwarg = "offer_id"
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object(queryset=models.Offer.objects.all())
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["offer"] = self.object
+        return context
+
+    def get_queryset(self):
+        return self.object.position_set.all()
 
 
 class AddPositionView(views.View):
@@ -432,13 +451,44 @@ class AddPositionView(views.View):
         customer = offer.customer
         contact = offer.customerContact
         address = offer.customerAddress
-        form = forms.AddPositionForm(offer, customer,
+        form = forms.AddPositionForm(
+            offer,
             initial={
                 "primary": True,
                 "contactPerson": contact,
                 "deliveryAddress": address,
-            }
+            },
         )
-
         ctx = {"form": form, "offer": offer}
         return render(request, "opakowania/product_add.html", ctx)
+
+    def post(self, request, **kwargs):
+        offer = models.Offer.objects.get(pk=self.kwargs["offer_id"])
+        customer = offer.customer
+        contact = offer.customerContact
+        address = offer.customerAddress
+        print('tutaj')
+        print(offer)
+        form = forms.AddPositionForm(request.POST, offer)
+        if form.is_valid():
+            form.save()
+
+        return HttpResponse("yeey")
+
+
+class CustomerDetail(SingleObjectMixin, ListView):
+    paginate_by = 2
+    template_name = "opakowania/customer_offers_modal.html"
+    pk_url_kwarg = "customer_id"
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object(queryset=models.Customer.objects.all())
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["customer"] = self.object
+        return context
+
+    def get_queryset(self):
+        return self.object.offer_set.all()

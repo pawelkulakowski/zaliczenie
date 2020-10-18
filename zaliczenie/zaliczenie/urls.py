@@ -86,5 +86,14 @@ urlpatterns = [
         views.OfferEditView.as_view(),
         name="offer-edit",
     ),
-    path("customer/<int:customer_id>/edit-offer/<int:offer_id>/add-position", views.AddPositionView.as_view(), name='position-add')
+    path(
+        "customer/<int:customer_id>/edit-offer/<int:offer_id>/add-position",
+        views.AddPositionView.as_view(),
+        name="position-add",
+    ),
+    re_path(
+        r"^customer/(?P<customer_id>\d+)/offers/",
+        views.CustomerDetail.as_view(),
+        name="customer-offers",
+    ),
 ]

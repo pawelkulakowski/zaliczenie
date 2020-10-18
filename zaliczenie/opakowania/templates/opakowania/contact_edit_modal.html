@@ -6,7 +6,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">Edytuj kontakt</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -17,10 +17,12 @@
                     {{ contact_form.name|as_crispy_field }}
                     {{ contact_form.phone|as_crispy_field }}
                     {{ contact_form.email|as_crispy_field }}
+                    <p class="text-danger">{{ contact_form.non_field_errors.as_text }}</p>
                     {{ contact_form.position|as_crispy_field }}
+                    
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuluj</button>
+                    <button type="button" class="close-modal btn btn-secondary" data-dismiss="modal">Anuluj</button>
                     <input type="submit" class="btn btn-primary" value="Zapisz">
                 </div>
             </form>
