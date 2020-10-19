@@ -91,6 +91,11 @@ urlpatterns = [
         views.AddProductView.as_view(),
         name="product-add",
     ),
+     path(
+        "customer/<int:customer_id>/edit-offer/<int:offer_id>/add-product/<int:position_id>",
+        views.AddProductView.as_view(),
+        name="product-add",
+    ),
     re_path(
         r"^customer/(?P<customer_id>\d+)/offers/",
         views.CustomerDetail.as_view(),

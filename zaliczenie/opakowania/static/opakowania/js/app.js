@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log(this.href);
         $.get(this.href, function (data) {
             $('#modalContainer').html(data);
-            console.log(data);
             $("#staticBackdrop").modal();
 
             $("body").on("submit", "#modalContainer form", function (e) {
@@ -25,6 +24,8 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     });
+
+
 
     $("body").on('click', ".offerContactList", function (e) {
         e.preventDefault();
@@ -60,16 +61,41 @@ document.addEventListener('DOMContentLoaded', function () {
         window.location.reload();
     });
 
+    $(document).on('shown.bs.modal', '.modal', function () {
+
+        $('[data-toggle=tooltip]').tooltip({ delay: { "show": 200, "hide": 100 } });
+        $('.table-row-link').click(function () {
+            window.location = $(this).data("href");
+        });
+    });
+
     $('[data-toggle=tooltip]').tooltip({ delay: { "show": 200, "hide": 100 } });
 
-    $('.products-toggle-btn').click(function(e){
-        var btn = $(e.target)
-        console.log(btn.data('position_id'))
-        $(document.getElementById(btn.data('position_id'))).toggle(500)
-     });
 
+
+    $('.products-toggle-btn').click(function (e) {
+        var btn = $(e.target)
+        if (btn.data('mode') === 'hidden')
+        {
+            btn.data('mode', 'visible')
+            btn.text('Ukryj produkty')
+            btn.removeClass('btn-outline-info')
+            btn.addClass('btn-outline-danger')
+        }else{
+            btn.data('mode', 'hidden')
+            btn.text('Pokaż produkty')
+            btn.removeClass('btn-outline-danger')
+            btn.addClass('btn-outline-info')
+            
+        }
+        var div = $(document.getElementById(btn.data('position_id')))
+        div.toggle(200);
+    });
+
+    $(document).ready(function ($) {
+
+    });
 
     //this changes delay time for hyperlink icons
 
 })
-

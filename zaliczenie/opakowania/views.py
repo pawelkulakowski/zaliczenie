@@ -451,10 +451,15 @@ class AddProductView(views.View):
         customer = offer.customer
         contact = offer.customerContact
         address = offer.customerAddress
+        if "position_id" in self.kwargs:
+            primary = False
+        else:
+            primary = True
+
         form = forms.AddPositionForm(
             offer,
             initial={
-                "primary": True,
+                "primary": primary,
                 "contactPerson": contact,
                 "deliveryAddress": address,
             },
@@ -469,8 +474,10 @@ class AddProductView(views.View):
 
             if form.cleaned_data["primary"]:
                 position = models.Position.objects.create(offer=offer)
+                offer.add_position()
             else:
-                position = models.Position.filter(pk=self.kwargs["position_id"])
+                position = models.Position.objects.get(pk=self.kwargs["position_id"])
+                position.add_product()                
 
             product = models.Product(**form.cleaned_data)
             product.position = position

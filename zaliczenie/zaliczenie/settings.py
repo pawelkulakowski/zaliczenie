@@ -122,11 +122,14 @@ LANGUAGE_CODE = 'pl-PL'
 
 TIME_ZONE = 'CET'
 
+DATETIME_FORMAT = 'd-M-Y'
+
+USE_L10N = False
+
+USE_TZ = False
+
 USE_I18N = True
 
-USE_L10N = True
-
-USE_TZ = True
 
 
 # Static files (CSS, JavaScript, Images)

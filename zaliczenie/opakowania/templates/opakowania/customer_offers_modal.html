@@ -1,29 +1,53 @@
 {% load crispy_forms_tags %}
 
-<div id="staticBackdrop" class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true">
+<div id="staticBackdrop" class="modal fade myModal" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="staticBackdropLabel">{{ customer.customer_name }}</h5>
+
                 <button type="button" class="close close-modal" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body modal-height-400 ">
-
-                <div class="list-group list-group-flush">
-                    {% for offer in customer.offer_set.all %}
-                    <a href="{% url 'offer-edit' customer.id offer.id %}" class="list-group-item list-group-item-action">{{ offer.signature }}</a>
-                    {% endfor %}
-                </div>
+                <table class="table table-sm table-hover">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col" class="th-sm">Sygnatura</th>
+                            <th scope="col" class="th-sm">Status</th>
+                            <th scope="col" class="th-sm">Ilość pozycji</th>
+                            <th scope="col" class="th-sm">Ilość produktów</th>
+                            <th scope="col" class="th-sm">Data dodania</th>
+                            <th scope="col" class="th-sm">Ostania edycja</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for offer in customer.offer_set.all %}
+                        <tr class="table-row-link" data-offer_id={{ offer.id }} data-toggle="tooltip"
+                            data-placement="left" title="Kliknij aby otworzyć"
+                            data-href="{% url 'offer-edit' customer.id offer.id %}">
+                            <td>{{ offer.signature }}</td>
+                            <td>{{ offer.get_status_display }}</td>
+                            <td>{{ offer.get_positions_count }}</td>
+                            <td>{{ offer.get_product_count }}</td>
+                            <td>{{ offer.created }}</td>
+                            <td>{{ offer.lastModified }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
             <div class="modal-footer">
+
                 <button type="button" class="close-modal btn btn-secondary" data-dismiss="modal">Anuluj</button>
                 <input type="submit" class="btn btn-primary" value="Zapisz">
+
             </div>
         </div>
     </div>
-  </div>
+</div>
 
 
 <!-- <div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1"

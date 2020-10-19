@@ -80,10 +80,19 @@ class Offer(models.Model):
 
     def get_positions_count(self):
         return Position.objects.filter(offer=self).count()
-    
+
+    def get_product_count(self):
+        count = 0
+        positions = Position.objects.filter(offer=self)
+        for pos in positions:
+            count += pos.numberOfProducts
+        return count
+
     def add_position(self):
         self.numberOfPositions += 1
+        self.save()
         return self.numberOfPositions
+        
 
     def __str__(self):
         return f"Klient: {self.customer.customer_name}, kontakt: {self.customerContact.name}, adres: {self.customerAddress.address}"
@@ -95,6 +104,9 @@ class Offer(models.Model):
     )
     comments = models.TextField(verbose_name="Komentarz")
     created = models.DateTimeField(auto_now_add=True, verbose_name="Data utworzenia")
+    lastModified = models.DateTimeField(
+        auto_now=True, verbose_name="Data ostaniej edycji"
+    )
     status = models.IntegerField(choices=STATUS, default=1, verbose_name="Status")
     expirationDate = models.DateField(
         null=False, default=now_plus_month, verbose_name="Data wygaśnięcia"
@@ -117,18 +129,15 @@ class Position(models.Model):
     def get_primary_product(self):
         return Product.objects.filter(position=self).filter(primary=True).first()
 
-    def get_products_count(self):
-        return Product.objects.filter(position=self).count()
-
     def add_product(self):
         self.numberOfProducts += 1
-        return self.numberOfProducts
+        self.save()
 
     def ordered_product_set(self):
-        return self.product_set.all().order_by('-primary')
+        return self.product_set.all().order_by("-primary")
 
     offer = models.ForeignKey(Offer, null=False, on_delete=models.CASCADE)
-    
+
     numberOfProducts = models.PositiveIntegerField(
         default=1, verbose_name="Ilość produktów", null=False
     )
@@ -136,9 +145,8 @@ class Position(models.Model):
 
     def save(self, *args, **kwargs):
         if self.orderNumberInOffer is None:
-            self.orderNumberInOffer = self.offer.add_position()
-            super().save(*args, **kwargs)
-        
+            self.orderNumberInOffer = self.offer.numberOfPositions
+        super(Position, self).save(*args, **kwargs)
 
 
 class Product(models.Model):
@@ -219,8 +227,12 @@ class Product(models.Model):
         on_delete=models.SET_NULL,
         verbose_name="Adres dostawy",
     )
+    created = models.DateTimeField(auto_now_add=True, verbose_name="Data utworzenia")
+    lastModified = models.DateTimeField(
+        auto_now=True, verbose_name="Data ostaniej edycji"
+    )
 
     def save(self, *args, **kwargs):
         if self.orderNumberInPosition is None:
-            self.orderNumberInPosition = self.position.add_product()
-            super().save(*args, **kwargs)
+            self.orderNumberInPosition = self.position.numberOfProducts
+        super(Product, self).save(*args, **kwargs)
