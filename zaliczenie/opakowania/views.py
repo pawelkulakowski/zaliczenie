@@ -467,8 +467,6 @@ class AddPositionView(views.View):
         customer = offer.customer
         contact = offer.customerContact
         address = offer.customerAddress
-        print('tutaj')
-        print(offer)
         form = forms.AddPositionForm(request.POST, offer)
         if form.is_valid():
             form.save()

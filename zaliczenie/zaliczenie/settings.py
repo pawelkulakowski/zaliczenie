@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
+from decouple import config
+
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 os.environ['DJANGO_SETTINGS_MODULE'] = 'zaliczenie.settings'
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,10 +24,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'n#_nfi)g17x3l^d8(k2q%iu(u4oj_nxrium70ow9@ct)l_x1o#'
+SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config('DEBUG', default=True, cast=bool)
 
 ALLOWED_HOSTS = []
 
@@ -54,11 +57,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-DJANGO_ICONS = {
-    "ICONS": {
-        "edit": {"name": "far fa-pencil"},
-    },
-}
 
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -88,11 +86,11 @@ WSGI_APPLICATION = 'zaliczenie.wsgi.application'
 
 DATABASES = {
     'default': {
-        'HOST': '127.0.0.1',
-        'NAME': 'calc',
+        'HOST': config('DB_HOST'),
+        'NAME': config('DB_NAME'),
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'USER': 'postgres',
-        'PASSWORD': 'coderslab',
+        'USER': config('DB_USER'),
+        'PASSWORD': config('DB_PASSWORD'),
         'PORT': 5432
     }
 }
@@ -120,9 +118,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'pl-PL'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'CET'
 
 USE_I18N = True
 

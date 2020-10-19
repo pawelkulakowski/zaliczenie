@@ -8,7 +8,7 @@
     ],
     "python.formatting.provider": "black",
     "editor.rulers": [
-        88
+        95
     ],
     "python.linting.pylintEnabled": true
 }
