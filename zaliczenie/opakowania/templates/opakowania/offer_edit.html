@@ -33,14 +33,60 @@ Oferta {{ offer.signature }}
                 <span class="h3">Oferta {{ offer.signature }}</span>
             </div>
             <div id="offerContent" class="card-body bg-secondary">
+                {% for position in offer.position_set.all %}
+                <div class="card mb-2">
+                    <div class="card-header">
+                        <div class="d-flex justify-content-between">
+                            <div class="h4 p-0 m-0">Pozycja numer {{ position.orderNumberInOffer }}</div>
+                            <div class="h4 p-0 m-0">
+                                <span class="badge badge-pill badge-dark text-warning">Ilość produktów
+                                    {{ position.numberOfProducts }}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <p class="card-text">Indeks wewnętrzny produktu głównego:
+                            {{ position.get_primary_product.innerIndex }}</p>
+                        <p class="card-text">Indeks zewnętrzny produktu głównego:
+                            {{ position.get_primary_product.outsideIndex }}</p>
+                            <hr>
+                        <div class="product-container" id={{ position.id }} style="display: none;">
+                            <table class="table table-sm">
+                                <thead class="thead-dark">
+                                    <tr>
+                                        <th scope="col" class="th-sm">Nazwa</th>
+                                        <th scope="col" class="th-sm">Indeks wewnętrzny</th>
+                                        <th scope="col" class="th-sm">Główny</th>
+                                        <th scope="col" class="th-sm"></th><!-- Usuń produkt -->
+                                        <th scope="col" class="th-sm"></th><!-- Edytuj produkt -->
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for product in position.ordered_product_set %}
+                                    <tr>
+                                        <td>{{ product.name }}</td>
+                                        <td>{{ product.innerIndex }}</td>
+                                        <td>{{ product.primary }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer p-2">
+                        <a href="#" class="products-toggle-btn btn btn-outline-info btn-sm"
+                            data-position_id="{{ position.id }}">Pokaż produkty</a>
+                    </div>
+                </div>
 
+                {% endfor %}
             </div>
         </div>
     </div>
     <div class="col-3">
         <div class="row form-group">
             <div class="col-4">
-                <a id="nowaPozycjaBtn" href="{% url 'position-add' offer.customer.id offer.id %}"
+                <a id="nowaPozycjaBtn" href="{% url 'product-add' offer.customer.id offer.id %}"
                     class="btn btn-outline-info btn-lg" role="button" aria-disabled="true">Nowa
                     pozycja</a>
             </div>

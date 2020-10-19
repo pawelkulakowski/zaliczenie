@@ -445,7 +445,7 @@ class OfferEditView(SingleObjectMixin, ListView):
         return self.object.position_set.all()
 
 
-class AddPositionView(views.View):
+class AddProductView(views.View):
     def get(self, request, **kwargs):
         offer = models.Offer.objects.get(pk=self.kwargs["offer_id"])
         customer = offer.customer
@@ -464,14 +464,32 @@ class AddPositionView(views.View):
 
     def post(self, request, **kwargs):
         offer = models.Offer.objects.get(pk=self.kwargs["offer_id"])
-        customer = offer.customer
-        contact = offer.customerContact
-        address = offer.customerAddress
-        form = forms.AddPositionForm(request.POST, offer)
+        form = forms.AddPositionForm(offer, request.POST)
         if form.is_valid():
-            form.save()
 
-        return HttpResponse("yeey")
+            if form.cleaned_data["primary"]:
+                position = models.Position.objects.create(offer=offer)
+            else:
+                position = models.Position.filter(pk=self.kwargs["position_id"])
+
+            product = models.Product(**form.cleaned_data)
+            product.position = position
+            product.save()
+
+            return redirect(
+                reverse(
+                    "offer-edit",
+                    kwargs={
+                        "customer_id": self.kwargs["customer_id"],
+                        "offer_id": self.kwargs["offer_id"],
+                    },
+                )
+            )
+
+        else:
+            messages.error(request, "Błąd formularza")
+            ctx = {"form": form, "offer": offer, "errors": form.errors}
+            return render(request, "opakowania/product_add.html", ctx)
 
 
 class CustomerDetail(SingleObjectMixin, ListView):

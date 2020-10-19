@@ -221,7 +221,34 @@ class AddPositionForm(forms.ModelForm):
 
     class Meta:
         model = models.Product
-        fields = "__all__"
+        fields = [
+            "name",
+            "primary",
+            "form",
+            "laminating",
+            "solid",
+            "flexoOverprint",
+            "refinement",
+            "width",
+            "height",
+            "commentJoin",
+            "comments",
+            "contactPerson",
+            "deliveryAddress",
+            "deliveryVariantOne",
+            "deliveryVariantThree",
+            "deliveryVariantTwo",
+            "deliveryYearly",
+            "gluedJoin",
+            "innerIndex",
+            "length",
+            "mixedJoin",
+            "numberOfElements",
+            "offsetOverprint",
+            "outsideIndex",
+            "sewnJoin",
+            "sizeType",
+        ]
 
     def __init__(self, offer, *args, **kwargs):
         super(AddPositionForm, self).__init__(*args, **kwargs)

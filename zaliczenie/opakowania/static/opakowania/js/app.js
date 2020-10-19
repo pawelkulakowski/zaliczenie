@@ -62,6 +62,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
     $('[data-toggle=tooltip]').tooltip({ delay: { "show": 200, "hide": 100 } });
 
+    $('.products-toggle-btn').click(function(e){
+        var btn = $(e.target)
+        console.log(btn.data('position_id'))
+        $(document.getElementById(btn.data('position_id'))).toggle(500)
+     });
 
 
     //this changes delay time for hyperlink icons

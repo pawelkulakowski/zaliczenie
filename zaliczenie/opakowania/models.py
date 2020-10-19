@@ -3,6 +3,7 @@ from opakowania import validators
 from django import forms
 from datetime import date
 from django.utils import timezone, dateformat
+from django.db.models import F
 
 
 class Customer(models.Model):
@@ -77,6 +78,13 @@ class Offer(models.Model):
     def now_plus_month():
         return dateformat.format(timezone.now() + timezone.timedelta(days=30), "Y-m-d")
 
+    def get_positions_count(self):
+        return Position.objects.filter(offer=self).count()
+    
+    def add_position(self):
+        self.numberOfPositions += 1
+        return self.numberOfPositions
+
     def __str__(self):
         return f"Klient: {self.customer.customer_name}, kontakt: {self.customerContact.name}, adres: {self.customerAddress.address}"
 
@@ -94,8 +102,8 @@ class Offer(models.Model):
     customerContact = models.ForeignKey(Contact, null=True, on_delete=models.SET_NULL)
     customerAddress = models.ForeignKey(Address, null=True, on_delete=models.SET_NULL)
     customer = models.ForeignKey(Customer, null=False, on_delete=models.PROTECT)
-    itemsCount = models.IntegerField(
-        null=True, default=0, verbose_name="Ilość produktów"
+    numberOfPositions = models.IntegerField(
+        null=True, default=0, verbose_name="Ilość pozycji"
     )
     calculationUser = models.ForeignKey(
         User, null=True, on_delete=models.SET_NULL, related_name="calculationUser"
@@ -107,9 +115,30 @@ class Position(models.Model):
         return Position.objects.filter(position=self).count()
 
     def get_primary_product(self):
-        return Product.object.filter(position=self).filter(primary=True).first()
+        return Product.objects.filter(position=self).filter(primary=True).first()
+
+    def get_products_count(self):
+        return Product.objects.filter(position=self).count()
+
+    def add_product(self):
+        self.numberOfProducts += 1
+        return self.numberOfProducts
+
+    def ordered_product_set(self):
+        return self.product_set.all().order_by('-primary')
 
     offer = models.ForeignKey(Offer, null=False, on_delete=models.CASCADE)
+    
+    numberOfProducts = models.PositiveIntegerField(
+        default=1, verbose_name="Ilość produktów", null=False
+    )
+    orderNumberInOffer = models.IntegerField(null=False)
+
+    def save(self, *args, **kwargs):
+        if self.orderNumberInOffer is None:
+            self.orderNumberInOffer = self.offer.add_position()
+            super().save(*args, **kwargs)
+        
 
 
 class Product(models.Model):
@@ -118,6 +147,8 @@ class Product(models.Model):
         Zewnętrzny = 2
         Mieszany = 3
 
+    position = models.ForeignKey(Position, null=False, on_delete=models.CASCADE)
+    orderNumberInPosition = models.IntegerField(null=False)
     name = models.CharField(max_length=128, null=False, verbose_name="Nazwa produktu")
     innerIndex = models.CharField(
         max_length=128, null=False, blank=True, verbose_name="Indeks wewnętrzny"
@@ -188,3 +219,8 @@ class Product(models.Model):
         on_delete=models.SET_NULL,
         verbose_name="Adres dostawy",
     )
+
+    def save(self, *args, **kwargs):
+        if self.orderNumberInPosition is None:
+            self.orderNumberInPosition = self.position.add_product()
+            super().save(*args, **kwargs)
