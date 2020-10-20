@@ -1,0 +1,29 @@
+{% load crispy_forms_tags %}
+
+<div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Usuń pozycję</h5>
+                <button type="button" class="close-modal" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{% url 'position-delete' customer_id offer_id position_id %}" method="POST">
+                {% csrf_token %}
+                <div class="modal-body">
+
+                    <div class="h2 text-danger">Usunięcie pozycji spowoduje usunięcie wszystkich produktów do niej neleżących.</p>
+
+                </div>
+                <div class="modal-footer alert alert-danger">
+                    <button type="button" class="btn btn-secondary btn-sm btn-block close-modal"
+                        data-dismiss="modal">Anuluj</button>
+                    <input type="submit" class="btn btn-danger btn-sm btn-block" value="Usuń">
+
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

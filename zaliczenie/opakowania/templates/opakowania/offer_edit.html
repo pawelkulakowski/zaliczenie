@@ -78,7 +78,11 @@ Oferta {{ offer.signature }}
                                     <tr>
                                         <td>{{ product.name }}</td>
                                         <td>{{ product.innerIndex }}</td>
-                                        <td>{{ product.primary }}</td>
+                                        {% if product.primary %}
+                                        <td>Tak</td>
+                                        {% else %}
+                                        <td>Nie</td>
+                                        {% endif %}
                                         <td>{{ product.created }}</td>
                                         <td>{{ product.lastModified }}</td>
                                         <td><i class="far fa-trash-alt"></i></td>
@@ -94,10 +98,20 @@ Oferta {{ offer.signature }}
                         </div>
                     </div>
                     <div class="card-footer p-2">
-                        <a href="#" class="products-toggle-btn btn btn-outline-info btn-sm"
-                            data-position_id="{{ position.id }}" data-mode="hidden">Pokaż produkty</a>
-                        <a href="{% url 'product-add' offer.customer.id offer.id position.id %}"
-                            class="btn btn-outline-info btn-sm">Dodaj produkt</a>
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <a href="#" class="products-toggle-btn btn btn-outline-info btn-sm"
+                                    data-position_id="{{ position.id }}" data-mode="hidden">Pokaż produkty</a>
+
+                                <a href="{% url 'product-add' offer.customer.id offer.id position.id %}"
+                                    class="btn btn-outline-info btn-sm">Dodaj produkt</a>
+                            </div>
+                            <div>
+                                <a href="{% url 'position-delete' offer.customer.id offer.id position.id %}"
+                                    class="generic-modal btn btn-outline-danger btn-sm">Usuń pozycje</a>
+                            </div>
+                        </div>
+
                     </div>
                 </div>
 

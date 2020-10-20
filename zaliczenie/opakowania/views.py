@@ -442,7 +442,7 @@ class OfferEditView(SingleObjectMixin, ListView):
         return context
 
     def get_queryset(self):
-        return self.object.position_set.all()
+        return self.object.ordered_position_set()
 
 
 class AddProductView(views.View):
@@ -473,8 +473,10 @@ class AddProductView(views.View):
         if form.is_valid():
 
             if form.cleaned_data["primary"]:
-                position = models.Position.objects.create(offer=offer)
                 offer.add_position()
+                position = models.Position()
+                position.offer = offer
+                position.save()
             else:
                 position = models.Position.objects.get(pk=self.kwargs["position_id"])
                 position.add_product()                
@@ -515,3 +517,24 @@ class CustomerDetail(SingleObjectMixin, ListView):
 
     def get_queryset(self):
         return self.object.offer_set.all()
+
+
+class PositionDeleteModalView(views.View):
+    def get(self, request, customer_id, offer_id, position_id):
+        position = models.Position.objects.get(pk=position_id)
+        ctx = {
+            "offer_id": offer_id,
+            "customer_id": customer_id,
+            "position_id": position_id,
+        }
+        return render(request, "opakowania/position_delete_modal.html", ctx)
+
+    def post(self, request, customer_id, offer_id, position_id):
+        position = models.Position.objects.get(pk=position_id)
+        position.delete()
+
+        messages.add_message(
+            request, messages.SUCCESS, "Pozycja pomyślnie usunięto z bazy"
+        )
+
+        return HttpResponse("")  

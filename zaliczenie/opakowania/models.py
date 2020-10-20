@@ -92,7 +92,9 @@ class Offer(models.Model):
         self.numberOfPositions += 1
         self.save()
         return self.numberOfPositions
-        
+    
+    def ordered_position_set(self):
+        return self.position_set.all().order_by("orderNumberInOffer")
 
     def __str__(self):
         return f"Klient: {self.customer.customer_name}, kontakt: {self.customerContact.name}, adres: {self.customerAddress.address}"
@@ -132,9 +134,10 @@ class Position(models.Model):
     def add_product(self):
         self.numberOfProducts += 1
         self.save()
+        return self.numberOfProducts
 
     def ordered_product_set(self):
-        return self.product_set.all().order_by("-primary")
+        return self.product_set.all().order_by("orderNumberInPosition")
 
     offer = models.ForeignKey(Offer, null=False, on_delete=models.CASCADE)
 
