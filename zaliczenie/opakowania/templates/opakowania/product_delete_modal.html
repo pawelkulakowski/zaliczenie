@@ -5,15 +5,16 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="staticBackdropLabel">Usuń pozycję</h5>
+                <h5 class="modal-title" id="staticBackdropLabel">Usuń produkt</h5>
                 <button type="button" class="close-modal" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form action="{% url 'position-delete' customer_id offer_id position_id %}" method="POST">
+            <form action="{% url 'product-delete' product_id %}" method="POST">
                 {% csrf_token %}
                 <div class="modal-body">
-                    <div class="h2 text-danger text-center">Usunięcie pozycji spowoduje usunięcie wszystkich produktów do niej neleżących.</p>
+
+                    <div class="h2 text-danger">Czy na pewno?</p>
 
                 </div>
                 <div class="modal-footer alert alert-danger">

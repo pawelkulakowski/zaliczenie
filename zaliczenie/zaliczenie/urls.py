@@ -101,6 +101,16 @@ urlpatterns = [
         views.PositionDeleteModalView.as_view(),
         name="position-delete",
     ),
+    path(
+        "delete-product/<int:product_id>",
+        views.ProductDeleteModalView.as_view(),
+        name="product-delete",
+    ),
+    path(
+        "restore-product/<int:product_id>",
+        views.ProductRestoreView.as_view(),
+        name="product-restore",
+    ),
     re_path(
         r"^customer/(?P<customer_id>\d+)/offers/",
         views.CustomerDetail.as_view(),

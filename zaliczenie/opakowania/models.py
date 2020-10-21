@@ -90,11 +90,23 @@ class Offer(models.Model):
 
     def add_position(self):
         self.numberOfPositions += 1
+        self.activePositions += 1
         self.save()
         return self.numberOfPositions
-    
+
+    def remove_position(self):
+        self.deletedPositions += 1
+        self.activePositions -= 1
+        self.save()
+        return self.numberOfPositions
+
+    def restore_position(self):
+        self.deletedPositions -= 1
+        self.activePositions += 1
+        return self.numberOfPositions
+
     def ordered_position_set(self):
-        return self.position_set.all().order_by("orderNumberInOffer")
+        return self.position_set.order_by("orderNumberInOffer")
 
     def __str__(self):
         return f"Klient: {self.customer.customer_name}, kontakt: {self.customerContact.name}, adres: {self.customerAddress.address}"
@@ -119,37 +131,76 @@ class Offer(models.Model):
     numberOfPositions = models.IntegerField(
         null=True, default=0, verbose_name="Ilość pozycji"
     )
+    activePositions = models.PositiveIntegerField(default=1, null=False)
+    deletedPositions = models.PositiveIntegerField(default=0, null=False)
     calculationUser = models.ForeignKey(
         User, null=True, on_delete=models.SET_NULL, related_name="calculationUser"
     )
 
 
 class Position(models.Model):
-    def get_product_count(self):
-        return Position.objects.filter(position=self).count()
+
+    def get_product_count(self, deleted=False):
+        return Position.objects.filter(position=self).filter(deleted=deleted).count()
 
     def get_primary_product(self):
         return Product.objects.filter(position=self).filter(primary=True).first()
 
     def add_product(self):
         self.numberOfProducts += 1
+        self.activeProducts += 1
+        self.save()
+        return self.numberOfProducts
+
+    def remove_product(self):
+        self.activeProducts -= 1
+        self.deletedProducts += 1
+        self.save()
+        return self.numberOfProducts
+
+    def restore_product(self):
+        self.activeProducts += 1
+        self.deletedProducts -= 1
         self.save()
         return self.numberOfProducts
 
     def ordered_product_set(self):
-        return self.product_set.all().order_by("orderNumberInPosition")
+        return self.product_set.order_by("orderNumberInPosition")
+
+    def delete(self, *args, **kwargs):
+        for product in self.product_set.all():
+            product.delete()
+        self.deleted = True
+        self.deletedDate = dateformat.format(timezone.now(), "Y-m-d")
+        self.deletedProducts = self.numberOfProducts
+        self.save()
+
+    def restore(self):
+        for product in self.product_set.all():
+            product.restore()
+        self.deleted = False
+        self.deletedDate = None
+        self.save()
+
+    def save(self, *args, **kwargs):
+        if self.orderNumberInOffer is None:
+            self.orderNumberInOffer = self.offer.numberOfPositions
+        super(Position, self).save(*args, **kwargs)
 
     offer = models.ForeignKey(Offer, null=False, on_delete=models.CASCADE)
 
     numberOfProducts = models.PositiveIntegerField(
         default=1, verbose_name="Ilość produktów", null=False
     )
+    activeProducts = models.PositiveIntegerField(default=1, null=False)
+    deletedProducts = models.PositiveIntegerField(default=0, null=False)
     orderNumberInOffer = models.IntegerField(null=False)
-
-    def save(self, *args, **kwargs):
-        if self.orderNumberInOffer is None:
-            self.orderNumberInOffer = self.offer.numberOfPositions
-        super(Position, self).save(*args, **kwargs)
+    created = models.DateTimeField(auto_now_add=True, verbose_name="Data utworzenia")
+    lastModified = models.DateTimeField(
+        auto_now=True, verbose_name="Data ostaniej edycji"
+    )
+    deleted = models.BooleanField(default=False, null=False)
+    deletedDate = models.DateTimeField(null=True)
 
 
 class Product(models.Model):
@@ -157,6 +208,25 @@ class Product(models.Model):
         Wewnętrzny = 1
         Zewnętrzny = 2
         Mieszany = 3
+
+    def save(self, *args, **kwargs):
+        if self.orderNumberInPosition is None:
+            self.orderNumberInPosition = self.position.numberOfProducts
+        super(Product, self).save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        self.deleted = True
+        self.deletedDate = dateformat.format(timezone.now(), "Y-m-d")
+        self.save()
+        self.position.remove_product()
+        return True
+
+    def restore(self, *args, **kwargs):
+        self.deleted = False
+        self.deletedDate = None
+        self.save()
+        self.position.restore_product()
+        return True
 
     position = models.ForeignKey(Position, null=False, on_delete=models.CASCADE)
     orderNumberInPosition = models.IntegerField(null=False)
@@ -234,8 +304,5 @@ class Product(models.Model):
     lastModified = models.DateTimeField(
         auto_now=True, verbose_name="Data ostaniej edycji"
     )
-
-    def save(self, *args, **kwargs):
-        if self.orderNumberInPosition is None:
-            self.orderNumberInPosition = self.position.numberOfProducts
-        super(Product, self).save(*args, **kwargs)
+    deleted = models.BooleanField(default=False, null=False, verbose_name="Usunięto?")
+    deletedDate = models.DateTimeField(null=True, verbose_name="Data usunięcia")

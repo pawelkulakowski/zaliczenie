@@ -425,10 +425,6 @@ class OfferChangeAddress(views.View):
 
 
 class OfferEditView(SingleObjectMixin, ListView):
-    # def get(self, request, **kwargs):
-    #     offer = models.Offer.objects.get(pk=self.kwargs["offer_id"])
-    #     ctx = {"offer": offer}
-    #     return render(request, "opakowania/offer_edit.html", ctx)
     template_name = "opakowania/offer_edit.html"
     pk_url_kwarg = "offer_id"
 
@@ -439,9 +435,10 @@ class OfferEditView(SingleObjectMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["offer"] = self.object
+        context["positions"] = context.pop("object_list")
         return context
 
-    def get_queryset(self):
+    def get_queryset(self, *args, **kwargs):
         return self.object.ordered_position_set()
 
 
@@ -479,7 +476,7 @@ class AddProductView(views.View):
                 position.save()
             else:
                 position = models.Position.objects.get(pk=self.kwargs["position_id"])
-                position.add_product()                
+                position.add_product()
 
             product = models.Product(**form.cleaned_data)
             product.position = position
@@ -534,7 +531,33 @@ class PositionDeleteModalView(views.View):
         position.delete()
 
         messages.add_message(
-            request, messages.SUCCESS, "Pozycja pomyślnie usunięto z bazy"
+            request, messages.SUCCESS, "Pozycja pomyślnie usunięto"
         )
 
-        return HttpResponse("")  
+        return HttpResponse("")
+
+
+class ProductDeleteModalView(views.View):
+    def get(self, request, product_id):
+        ctx = {'product_id': product_id}
+        return render(request, "opakowania/product_delete_modal.html", ctx)
+
+    def post(self, request, product_id):
+        product = models.Product.objects.get(pk=product_id)
+        product.delete()
+
+        messages.add_message(
+            request, messages.SUCCESS, "Produkt pomyślnie usunięto"
+        )
+
+        return HttpResponse("")
+
+
+class ProductRestoreView(views.View):
+    def get(self, request, product_id):
+        product = models.Product.objects.get(pk=product_id)
+        product.restore()
+        messages.add_message(
+            request, messages.SUCCESS, "Produkt pomyślnie przywrócony"
+        )
+        return redirect(request.META.get("HTTP_REFERER"))

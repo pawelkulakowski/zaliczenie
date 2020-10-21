@@ -33,14 +33,20 @@ Oferta {{ offer.signature }}
                 <span class="h3">Oferta {{ offer.signature }}</span>
             </div>
             <div id="offerContent" class="card-body bg-secondary">
-                {% for position in offer.position_set.all %}
-                <div class="card mb-2">
+                <div class="h1 text-danger text-center position-container" style="display: none;">Pozycje usunięte</div>
+                {% for position in positions %}
+
+                <div class="card mb-2 position-container" {% if position.deleted %} style="display: none;" {% endif %}>
+
                     <div class="card-header">
                         <div class="d-flex justify-content-between">
                             <div class="h4 p-0 m-0">Pozycja numer {{ position.orderNumberInOffer }}</div>
+                            {% if position.deleted %}
+                            <div class="h4 p-0 m-0">Pozycja usunięta {{ position.deletedDate }}</div>
+                            {% endif %}
                             <div class="h4 p-0 m-0">
                                 <span class="badge badge-pill badge-dark text-warning">Ilość produktów
-                                    {{ position.numberOfProducts }}</span>
+                                    {{ position.activeProducts }}</span>
                             </div>
                         </div>
                     </div>
@@ -55,26 +61,35 @@ Oferta {{ offer.signature }}
                                 </tr>
                             </tbody>
                         </table>
-                        <!-- <p class="card-text">Indeks wewnętrzny produktu głównego:
-                            {{ position.get_primary_product.innerIndex }}</p>
-                        <p class="card-text">Indeks zewnętrzny produktu głównego:
-                            {{ position.get_primary_product.outsideIndex }}</p> -->
-                        <div class="product-container" id={{ position.id }} style="display: none;">
+                        <div class="product-container" id="product_container_{{ position.id }}" style="display: none;">
                             <table class="table table-sm">
                                 <thead class="thead-dark">
                                     <tr>
-                                        <th scope="col" class="th-sm">Nazwa</th>
-                                        <th scope="col" class="th-sm">Indeks wewnętrzny</th>
-                                        <th scope="col" class="th-sm">Główny</th>
-                                        <th scope="col" class="th-sm">Data dodania</th>
-                                        <th scope="col" class="th-sm">Data edycji</th>
-                                        <th scope="col" class="th-sm"></th><!-- Edytuj produkt -->
-                                        <th scope="col" class="th-sm"></th><!-- Usuń produkt -->
+                                        <th scope="col" class="th-sm" style="width: 24%;">Nazwa</th>
+                                        <th scope="col" class="th-sm" style="width: 30%;">Indeks wewnętrzny</th>
+                                        <th scope="col" class="th-sm" style="width: 7%;">Główny</th>
+                                        <th scope="col" class="th-sm" style="width: 10%;">Data dodania</th>
+                                        <th scope="col" class="th-sm" style="width: 23%;">Data edycji</th>
+                                        <th scope="col" class="th-sm" style="width: 3%;"></th><!-- Edytuj produkt -->
+                                        <th scope="col" class="th-sm" style="width: 3%;"></th><!-- Usuń produkt -->
 
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {% for product in position.ordered_product_set %}
+                                    {% if product.deleted %}
+                                    <tr class="delete-product-hidden-row">
+                                        <td>{{ product.name }}</td>
+                                        <td>{{ product.innerIndex }}</td>
+                                        <td>Nie</td>
+                                        <td>{{ product.created }}</td>
+                                        <td>{{ product.lastModified }} <span class="text-danger"> usunięto:
+                                                {{ product.deletedDate }}</span></td>
+                                        <td></td>
+                                        <td></td>
+
+                                    </tr>
+                                    {% else %}
                                     <tr>
                                         <td>{{ product.name }}</td>
                                         <td>{{ product.innerIndex }}</td>
@@ -85,13 +100,19 @@ Oferta {{ offer.signature }}
                                         {% endif %}
                                         <td>{{ product.created }}</td>
                                         <td>{{ product.lastModified }}</td>
-                                        <td><i class="far fa-trash-alt"></i></td>
-
+                                        {% if product.primary %}
+                                        <td></td>
+                                        {% else %}
+                                        <td><a class="generic-modal text-danger"
+                                                href="{% url 'product-delete' product.id %}" data-toggle="tooltip"
+                                                data-placement="right" title="Usuń produkt"><i
+                                                    class="far fa-trash-alt"></i></a></td>
+                                        {% endif %}
                                         <td><a class="generic-modal text-info" data-toggle="tooltip"
-                                                data-placement="right" title="Usuń produkt" href="#">
+                                                data-placement="right" title="Edytuj produkt" href="#">
                                                 <i class="far fa-edit"></i></a></td>
-
                                     </tr>
+                                    {% endif %}
                                     {% endfor %}
                                 </tbody>
                             </table>
@@ -100,15 +121,28 @@ Oferta {{ offer.signature }}
                     <div class="card-footer p-2">
                         <div class="d-flex justify-content-between">
                             <div>
-                                <a href="#" class="products-toggle-btn btn btn-outline-info btn-sm"
+                                <a href="#" class="products-toggle-btn btn btn-outline-info btn-md"
                                     data-position_id="{{ position.id }}" data-mode="hidden">Pokaż produkty</a>
+                                {% if position.deleted == False %}
+                                <a href="#" class="btn btn-outline-info btn-md show-deleted-products-btn"
+                                    style="display: none;" data-mode="hidden"
+                                    id="show_deleted_products_{{ position.id }}" data-position_id="{{ position.id }}">
+                                    Pokaż usunięte produkty
+                                    <span class="badge badge-pill badge-dark text-warning">
+                                        {{ position.deletedProducts }}</span></a>
 
                                 <a href="{% url 'product-add' offer.customer.id offer.id position.id %}"
-                                    class="btn btn-outline-info btn-sm">Dodaj produkt</a>
+                                    class="btn btn-outline-info btn-md">Dodaj produkt</a>
+                                {% endif %}
                             </div>
                             <div>
+                                {% if position.deleted %}
+                                <a href="#"
+                                    class="generic-modal btn btn-outline-danger btn-md">Przywróć pozycję</a>
+                                {% else %}
                                 <a href="{% url 'position-delete' offer.customer.id offer.id position.id %}"
-                                    class="generic-modal btn btn-outline-danger btn-sm">Usuń pozycje</a>
+                                    class="generic-modal btn btn-outline-danger btn-md">Usuń pozycję</a>
+                                {% endif %}
                             </div>
                         </div>
 
@@ -122,14 +156,20 @@ Oferta {{ offer.signature }}
     <div class="col-2">
 
         <div class="col-12 mb-2">
-            <a id="nowaPozycjaBtn" href="{% url 'product-add' offer.customer.id offer.id %}"
-                class="btn btn-outline-info btn-lg btn-block" role="button" aria-disabled="true">Nowa
+            <a href="{% url 'product-add' offer.customer.id offer.id %}"
+                class="btn btn-outline-info btn-lg btn-block">Nowa
                 pozycja</a>
         </div>
-
-        <div class="col-12">
-            <a href="{% url 'customer-search' %}" class="btn btn-outline-danger btn-lg btn-block ">Zamknij ofertę</a>
+        <div class="col-12 mb-2">
+            <a href="" class="btn btn-outline-info btn-lg btn-block" id="show-deleted-positions-btn"
+                data-mode="hidden">Pokaż usunięte pozycje</a>
         </div>
+
+        <div class="col-12 mb-2">
+            <a href="{% url 'customer-search' %}" class="btn btn-outline-danger btn-lg btn-block ">Zamknij
+                ofertę</a>
+        </div>
+
 
     </div>
 
