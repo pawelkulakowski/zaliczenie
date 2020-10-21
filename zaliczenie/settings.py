@@ -87,11 +87,11 @@ WSGI_APPLICATION = 'zaliczenie.wsgi.application'
 
 DATABASES = {
     'default': {
-        'HOST': config('DB_HOST'),
-        'NAME': config('DB_NAME'),
+        'HOST': config('DB_HOST', default=''),
+        'NAME': config('DB_NAME', default=''),
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'USER': config('DB_USER'),
-        'PASSWORD': config('DB_PASSWORD'),
+        'USER': config('DB_USER', default=''),
+        'PASSWORD': config('DB_PASSWORD', default=''),
         'PORT': 5432
     }
 }
