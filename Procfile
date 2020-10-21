@@ -1,1 +1,1 @@
-web: gunicorn twitter.wsgi
+web: gunicorn opakowania.wsgi

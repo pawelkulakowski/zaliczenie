@@ -8,7 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.db.models import Q
 from django.contrib import messages
 from datetime import datetime
-
+import requests
 
 class MainPageView(views.View):
     def get(self, request):
