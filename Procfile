@@ -1,1 +1,1 @@
-web: gunicorn opakowania.wsgi
+web: gunicorn zaliczenie.wsgi
