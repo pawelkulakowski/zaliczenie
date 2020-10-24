@@ -25,6 +25,9 @@ class Customer(models.Model):
     def get_primary_contact(self):
         return Contact.objects.filter(customer=self).filter(primary=True).first()
 
+    def ordered_offer_set(self):
+        return self.offer_set.order_by("-lastModified")
+
 
 class Address(models.Model):
     zip_code = models.CharField(max_length=10, null=False, verbose_name="Kod pocztowy")
@@ -182,7 +185,7 @@ class Position(models.Model):
         self.deletedDate = None
         self.save()
 
-    def save(self, *args, **kwargs):
+    def save(self,commit=True,  *args, **kwargs):
         if self.orderNumberInOffer is None:
             self.orderNumberInOffer = self.offer.numberOfPositions
         super(Position, self).save(*args, **kwargs)

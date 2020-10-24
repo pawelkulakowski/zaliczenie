@@ -9,9 +9,8 @@
   <meta charset="UTF-8">
   <title>{% block title %}{% endblock %}</title>
 
-  <!-- <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
-    integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous"> -->
-
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+    integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
 
 
   <script src="{% static 'opakowania/js/jquery-3.5.1.min.js' %}"></script>
@@ -26,10 +25,8 @@
 
   <script src="https://kit.fontawesome.com/172379242f.js" crossorigin="anonymous"></script>
 
-
-
   <script src="{% static 'opakowania/js/app.js' %}"></script>
-  <link rel="stylesheet" type="text/css" href="{% static 'opakowania/CSS/bootstrap.min.css' %}">
+  <!-- <link rel="stylesheet" type="text/css" href="{% static 'opakowania/CSS/bootstrap.min.css' %}"> -->
   <link rel="stylesheet" type="text/css" href="{% static 'opakowania/CSS/style.css' %}">
   <link href='http://fonts.googleapis.com/css?family=Oswald:400,300,700' rel='stylesheet' type='text/css'>
   <link href='http://fonts.googleapis.com/css?family=Ubuntu Condensed:400,300,700' rel='stylesheet' type='text/css'>
@@ -54,7 +51,7 @@
 
           {% endblock %}
 
-          <div class="card-body">
+          <div class="card-body index-bg" >
 
             {% block content %}
 

@@ -45,17 +45,13 @@ Nowa oferta dla {{ customer.customer_name }}
                         <td>{{ offer.expirationDate }}</td>
                     </tr>
                     <tr>
-                        <td>Komentarz</td>
-                        <td></td>
+                        <td colspan="2">Komentarz
+                        <form id="offerCommentForm" class="form" method="post">
+                            {% csrf_token %}
+                            {{ commentForm|crispy}}
+                        </form></td>
                     </tr>
-                    <tr>
-                        <td colspan="2">
-                            <form id="offerCommentForm" class="form" method="post">
-                                {% csrf_token %}
-                                {{ commentForm|crispy}}
-                            </form>
-                        </td>
-                    </tr>
+  
 
                 </table>
             </div>

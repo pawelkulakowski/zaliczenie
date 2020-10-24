@@ -107,6 +107,12 @@ urlpatterns = [
         name="product-delete",
     ),
     path(
+        "customer/<int:customer_id>/edit-offer/<int:offer_id>/edit-product/<int:product_id>",
+        views.ProductEditView.as_view(),
+        name="product-edit",
+    ),
+    
+    path(
         "restore-product/<int:product_id>",
         views.ProductRestoreView.as_view(),
         name="product-restore",

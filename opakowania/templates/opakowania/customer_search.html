@@ -63,7 +63,8 @@ Witaj
                         {% for customer in customers %}
                         <tr>
                             <th scope="row">{{ forloop.counter }}</th>
-                            <td><a class=" generic-modal btn btn-block btn-sm"
+                            <td><a class=" generic-modal btn btn-block btn-sm" data-toggle="tooltip" data-placement="bottom"
+                                title="Pokaż oferty"
                                     href="{% url 'customer-offers' customer.id %}">{{ customer.customer_name }}</a></td>
                             <td>{{ customer.tax_code }} </td>
                             <td><a class="text-reset text-info" data-toggle="tooltip" data-placement="right"

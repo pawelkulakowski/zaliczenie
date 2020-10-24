@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect, reverse
 from django import views
-from django.views.generic.edit import FormView, FormMixin, SingleObjectMixin
+from django.views.generic.edit import FormView, FormMixin, SingleObjectMixin, UpdateView
 from django.views.generic.list import ListView
 from opakowania import forms
 from opakowania import models
@@ -9,6 +9,7 @@ from django.db.models import Q
 from django.contrib import messages
 from datetime import datetime
 import requests
+
 
 class MainPageView(views.View):
     def get(self, request):
@@ -49,7 +50,7 @@ class CustomerAddView(views.View):
             contact_form.save(customer)
             address_form.save(customer)
 
-            return HttpResponse("dodano")
+            return redirect(reverse("search-customer"))
         else:
             return render(request, "opakowania/customer_add.html", ctx)
 
@@ -94,7 +95,7 @@ class CustomerEditView(views.View):
             customer_form.save()
             messages.add_message(request, messages.SUCCESS, "Zmiany pomyślnie zapisane")
 
-        return render(request, "opakowania/customer_edit.html", ctx)
+        return redirect(reverse('customer-search'))
 
 
 class CustomerSearchView(views.View):
@@ -293,9 +294,7 @@ class AddressDeleteModalView(views.View):
         address = models.Address.objects.get(pk=address_id)
         address.delete()
 
-        messages.add_message(
-            request, messages.SUCCESS, "Adres pomyślnie usunięto z bazy"
-        )
+        c
 
         return HttpResponse("")
 
@@ -450,37 +449,54 @@ class AddProductView(views.View):
         address = offer.customerAddress
         if "position_id" in self.kwargs:
             primary = False
+            position = models.Position.objects.get(pk=self.kwargs["position_id"])
+            form = forms.AddProductForm(
+                offer,
+                initial={
+                    "primary": primary,
+                    "contactPerson": contact,
+                    "deliveryAddress": address,
+                    "position": position
+                },
+            )
         else:
             primary = True
+            form = forms.AddPositionForm(
+                offer,
+                initial={
+                    "primary": primary,
+                    "contactPerson": contact,
+                    "deliveryAddress": address
+                },
+            )
 
-        form = forms.AddPositionForm(
-            offer,
-            initial={
-                "primary": primary,
-                "contactPerson": contact,
-                "deliveryAddress": address,
-            },
-        )
         ctx = {"form": form, "offer": offer}
         return render(request, "opakowania/product_add.html", ctx)
 
     def post(self, request, **kwargs):
         offer = models.Offer.objects.get(pk=self.kwargs["offer_id"])
-        form = forms.AddPositionForm(offer, request.POST)
+        if "position_id" in self.kwargs:
+            form = forms.AddProductForm(offer, request.POST)
+        else:
+            form = forms.AddPositionForm(offer, request.POST)
+        
         if form.is_valid():
-
             if form.cleaned_data["primary"]:
                 offer.add_position()
                 position = models.Position()
                 position.offer = offer
                 position.save()
+                product = models.Product(**form.cleaned_data)
+                product.position = position
+                product.save()
             else:
-                position = models.Position.objects.get(pk=self.kwargs["position_id"])
+                form.save()
+                position = form.cleaned_data['position']
                 position.add_product()
 
-            product = models.Product(**form.cleaned_data)
-            product.position = position
-            product.save()
+            messages.add_message(
+                request, messages.SUCCESS, "Produkt pomyślnie dodany do bazy"
+            )
 
             return redirect(
                 reverse(
@@ -498,8 +514,35 @@ class AddProductView(views.View):
             return render(request, "opakowania/product_add.html", ctx)
 
 
+class ProductEditView(views.View):
+    def get(self, request, **kwargs):
+        product = models.Product.objects.get(pk=kwargs["product_id"])
+        offer = models.Offer.objects.get(pk=kwargs["offer_id"])
+        print(product)
+        form = forms.AddPositionForm(offer, instance=product)
+        ctx = {"form": form, "offer": offer}
+        return render(request, "opakowania/product_edit.html", ctx)
+
+    def post(self, request, *args, **kwargs):
+        offer = models.Offer.objects.get(pk=kwargs["offer_id"])
+        form = forms.AddPositionForm(offer, request.POST)
+        if form.is_valid():
+            form.save()
+            messages.add_message(
+                request, messages.SUCCESS, "Zmiany zapisane pomyślnie"
+            )
+            return redirect(
+                reverse(
+                    "offer-edit",
+                    kwargs={
+                        "customer_id": self.kwargs["customer_id"],
+                        "offer_id": self.kwargs["offer_id"],
+                    },
+                )
+            )
+
+
 class CustomerDetail(SingleObjectMixin, ListView):
-    paginate_by = 2
     template_name = "opakowania/customer_offers_modal.html"
     pk_url_kwarg = "customer_id"
 
@@ -510,10 +553,11 @@ class CustomerDetail(SingleObjectMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["customer"] = self.object
+        context["offers"] = context.pop("object_list")
         return context
 
     def get_queryset(self):
-        return self.object.offer_set.all()
+        return self.object.ordered_offer_set()
 
 
 class PositionDeleteModalView(views.View):
@@ -529,26 +573,20 @@ class PositionDeleteModalView(views.View):
     def post(self, request, customer_id, offer_id, position_id):
         position = models.Position.objects.get(pk=position_id)
         position.delete()
-
-        messages.add_message(
-            request, messages.SUCCESS, "Pozycja pomyślnie usunięto"
-        )
-
+        messages.add_message(request, messages.SUCCESS, "Pozycja pomyślnie usunięto")
         return HttpResponse("")
 
 
 class ProductDeleteModalView(views.View):
     def get(self, request, product_id):
-        ctx = {'product_id': product_id}
+        ctx = {"product_id": product_id}
         return render(request, "opakowania/product_delete_modal.html", ctx)
 
     def post(self, request, product_id):
         product = models.Product.objects.get(pk=product_id)
         product.delete()
 
-        messages.add_message(
-            request, messages.SUCCESS, "Produkt pomyślnie usunięto"
-        )
+        messages.add_message(request, messages.SUCCESS, "Produkt pomyślnie usunięto")
 
         return HttpResponse("")
 
@@ -557,7 +595,5 @@ class ProductRestoreView(views.View):
     def get(self, request, product_id):
         product = models.Product.objects.get(pk=product_id)
         product.restore()
-        messages.add_message(
-            request, messages.SUCCESS, "Produkt pomyślnie przywrócony"
-        )
+        messages.add_message(request, messages.SUCCESS, "Produkt pomyślnie przywrócony")
         return redirect(request.META.get("HTTP_REFERER"))

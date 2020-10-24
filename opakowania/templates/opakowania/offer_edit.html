@@ -46,7 +46,7 @@ Oferta {{ offer.signature }}
                             {% endif %}
                             <div class="h4 p-0 m-0">
                                 <span class="badge badge-pill badge-dark text-warning">Ilość produktów
-                                    {{ position.activeProducts }}</span>
+                                    {% if position.deleted %}{{ position.numberOfProducts }}{% else %}{{ position.activeProducts }}{% endif %}</span>
                             </div>
                         </div>
                     </div>
@@ -78,14 +78,21 @@ Oferta {{ offer.signature }}
                                 <tbody>
                                     {% for product in position.ordered_product_set %}
                                     {% if product.deleted %}
-                                    <tr class="delete-product-hidden-row">
+                                    <tr class="delete-product-hidden-row" {% if position.deleted == False %}
+                                        style="display: none;" {% endif %}>
                                         <td>{{ product.name }}</td>
                                         <td>{{ product.innerIndex }}</td>
                                         <td>Nie</td>
                                         <td>{{ product.created }}</td>
                                         <td>{{ product.lastModified }} <span class="text-danger"> usunięto:
                                                 {{ product.deletedDate }}</span></td>
-                                        <td></td>
+                                        <td>{% if position.deleted == False %}
+                                            <a class="text-warning" data-toggle="tooltip" data-placement="right"
+                                                title="Przywróć produkt"
+                                                href="{% url 'product-restore' product.id %}"><i
+                                                    class="fas fa-trash-restore-alt"></i></a>
+                                            {% endif %}
+                                        </td>
                                         <td></td>
 
                                     </tr>
@@ -108,8 +115,9 @@ Oferta {{ offer.signature }}
                                                 data-placement="right" title="Usuń produkt"><i
                                                     class="far fa-trash-alt"></i></a></td>
                                         {% endif %}
-                                        <td><a class="generic-modal text-info" data-toggle="tooltip"
-                                                data-placement="right" title="Edytuj produkt" href="#">
+                                        <td><a class="text-info" data-toggle="tooltip" data-placement="right"
+                                                title="Edytuj produkt"
+                                                href="{% url 'product-edit' offer.customer.id offer.id product.id %}">
                                                 <i class="far fa-edit"></i></a></td>
                                     </tr>
                                     {% endif %}
@@ -127,7 +135,7 @@ Oferta {{ offer.signature }}
                                 <a href="#" class="btn btn-outline-info btn-md show-deleted-products-btn"
                                     style="display: none;" data-mode="hidden"
                                     id="show_deleted_products_{{ position.id }}" data-position_id="{{ position.id }}">
-                                    Pokaż usunięte produkty
+                                    <span class="btnText">Pokaż usunięte produkty</span>
                                     <span class="badge badge-pill badge-dark text-warning">
                                         {{ position.deletedProducts }}</span></a>
 
@@ -137,8 +145,7 @@ Oferta {{ offer.signature }}
                             </div>
                             <div>
                                 {% if position.deleted %}
-                                <a href="#"
-                                    class="generic-modal btn btn-outline-danger btn-md">Przywróć pozycję</a>
+                                <a href="#" class="generic-modal btn btn-outline-danger btn-md">Przywróć pozycję</a>
                                 {% else %}
                                 <a href="{% url 'position-delete' offer.customer.id offer.id position.id %}"
                                     class="generic-modal btn btn-outline-danger btn-md">Usuń pozycję</a>
@@ -156,21 +163,18 @@ Oferta {{ offer.signature }}
     <div class="col-2">
 
         <div class="col-12 mb-2">
-            <a href="{% url 'product-add' offer.customer.id offer.id %}"
-                class="btn btn-outline-info btn-lg btn-block">Nowa
+            <a href="{% url 'product-add' offer.customer.id offer.id %}" class="btn btn-info btn-lg btn-block">Nowa
                 pozycja</a>
         </div>
         <div class="col-12 mb-2">
-            <a href="" class="btn btn-outline-info btn-lg btn-block" id="show-deleted-positions-btn"
-                data-mode="hidden">Pokaż usunięte pozycje</a>
+            <a href="" class="btn btn-info btn-lg btn-block" id="show-deleted-positions-btn" data-mode="hidden">Pokaż
+                usunięte pozycje</a>
         </div>
 
         <div class="col-12 mb-2">
-            <a href="{% url 'customer-search' %}" class="btn btn-outline-danger btn-lg btn-block ">Zamknij
+            <a href="{% url 'customer-search' %}" class="btn btn-danger btn-lg btn-block ">Zamknij
                 ofertę</a>
         </div>
-
-
     </div>
 
 </div>

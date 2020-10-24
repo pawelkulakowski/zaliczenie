@@ -147,6 +147,7 @@ class OfferCommentForm(forms.Form):
     comments = forms.CharField(
         widget=forms.Textarea(attrs={"rows": 6, "cols": 40, "spellcheck": "true"}),
         required=False,
+        label=False,
     )
 
 
@@ -259,3 +260,40 @@ class AddPositionForm(forms.ModelForm):
 
         for visible in self.visible_fields():
             visible.field.widget.attrs["class"] = "form-control-sm"
+
+
+class AddProductForm(AddPositionForm):
+    def __init__(self, offer, *args, **kwargs):
+        super(AddProductForm, self).__init__(offer, *args, **kwargs)
+
+    class Meta:
+        model = models.Product
+        fields = [
+            "name",
+            "primary",
+            "form",
+            "laminating",
+            "solid",
+            "flexoOverprint",
+            "refinement",
+            "width",
+            "height",
+            "commentJoin",
+            "comments",
+            "contactPerson",
+            "deliveryAddress",
+            "deliveryVariantOne",
+            "deliveryVariantThree",
+            "deliveryVariantTwo",
+            "deliveryYearly",
+            "gluedJoin",
+            "innerIndex",
+            "length",
+            "mixedJoin",
+            "numberOfElements",
+            "offsetOverprint",
+            "outsideIndex",
+            "sewnJoin",
+            "sizeType",
+            "position",
+        ]

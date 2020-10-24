@@ -25,8 +25,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-
-
     $("body").on('click', ".offerContactList", function (e) {
         e.preventDefault();
         $.get(this.href, function (data) {
@@ -69,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    $('[data-toggle=tooltip]').tooltip({ delay: { "show": 200, "hide": 100 } });
+    $('[data-toggle=tooltip]').tooltip({ delay: { "show": 200, "hide": 100 }, boundary: 'window' });
 
 
     //toggle container to see product for selected position
@@ -88,7 +86,6 @@ document.addEventListener('DOMContentLoaded', function () {
             //hideRows(btn.data('position_id'));
 
         };
-        console.log('product_container_');
         var div = $(document.getElementById('product_container_' + btn.data('position_id')));
         div.toggle(200);
         var btn2 = $(document.getElementById('show_deleted_products_' + btn.data('position_id')));
@@ -102,13 +99,13 @@ document.addEventListener('DOMContentLoaded', function () {
         if (btn.data('mode') === 'hidden') {
             btn.data('mode', 'visible')
             btn.text('Ukryj usunięte pozycje')
-            btn.removeClass('btn-outline-info')
-            btn.addClass('btn-outline-danger')
+            btn.removeClass('btn-info')
+            btn.addClass('btn-danger')
         } else {
             btn.data('mode', 'hidden')
             btn.text('Pokaż usunięte pozycje')
-            btn.removeClass('btn-outline-danger')
-            btn.addClass('btn-outline-info')
+            btn.removeClass('btn-danger')
+            btn.addClass('btn-info')
 
         }
         $('.position-container').toggle(200);
@@ -117,15 +114,15 @@ document.addEventListener('DOMContentLoaded', function () {
     //unhide deleted products on product list
     $('.show-deleted-products-btn').click(function (e) {
         e.preventDefault();
-        var btn = $(e.target)
+        var btn = $(e.currentTarget)
         if (btn.data('mode') === 'hidden') {
             btn.data('mode', 'visible')
-            btn.text('Ukryj usunięte produkty')
+            btn.find("span.btnText").text('Ukryj usunięte produkty')
             btn.removeClass('btn-outline-info')
             btn.addClass('btn-outline-danger')
         } else {
             btn.data('mode', 'hidden')
-            btn.text('Pokaż usunięte produkty')
+            btn.find("span.btnText").text('Pokaż usunięte produkty')
             btn.removeClass('btn-outline-danger')
             btn.addClass('btn-outline-info')
         }
@@ -140,17 +137,3 @@ document.addEventListener('DOMContentLoaded', function () {
     //this changes delay time for hyperlink icons
 
 })
-
-function hideRows(id) {
-    var div = document.querySelector("#product_container_" + id);
-    var rows = div.querySelectorAll(".delete-product-hidden-row");
-    var btn = document.querySelector("#show_deleted_products_" + id)
-    console.log('hry')
-    for (let i = 0; i < rows.length; i++) {
-        $(rows[i]).hide()
-    }
-    btn.data('mode', 'hidden')
-    btn.text('Pokaż usunięte produkty')
-    btn.removeClass('btn-outline-danger')
-    btn.addClass('btn-outline-info')
-}

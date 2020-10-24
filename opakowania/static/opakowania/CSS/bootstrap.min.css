@@ -66,9 +66,7 @@ body {
     text-align: left;
     background-color: #fff
 }
-body {
-    font-family: 'Ubuntu Condensed', sans-serif !important;
-  }
+
 
 [tabindex="-1"]:focus {
     outline: 0!important

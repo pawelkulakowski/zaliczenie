@@ -24,7 +24,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for offer in customer.offer_set.all %}
+                        {% for offer in offers %}
                         <tr class="table-row-link" data-offer_id={{ offer.id }} data-toggle="tooltip"
                             data-placement="left" title="Kliknij aby otworzyć"
                             data-href="{% url 'offer-edit' customer.id offer.id %}">

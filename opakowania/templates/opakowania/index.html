@@ -7,19 +7,25 @@ Witaj
 {% endblock %}
 
 {% block navigation%}
-<ul class="nav nav-tabs card-header-tabs">
-    <li class="nav-item">
-      <a class="nav-link active" href="/">Start</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="{% url 'customer-add' %}">Nowy klient</a>
-    </li>
-    <li class="nav-item">
-      <a class="nav-link" href="{% url 'customer-search' %}">Szukaj klienta</a>
-    </li>
+<div class="card-header">
+  <ul class="nav nav-tabs card-header-tabs">
+      <li class="nav-item active">
+          <a class="nav-link" href="/">Start</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link" href="{% url 'customer-add' %}">Nowy klient</a>
+      </li>
+      <li class="nav-item">
+          <a class="nav-link" href="{% url 'customer-search' %}">Szukaj klienta</a>
+      </li>
   </ul>
+</div>
 {% endblock %}
 
 {% block content %}
-lsjdfhlaksgfhskdjfh.SLFHAS,FKHGALKFH;I
+<div class="row justify-content-center">
+  <div class="col-12">
+    sdfsdfsdf
+     </div>
+</div>
 {% endblock %}
