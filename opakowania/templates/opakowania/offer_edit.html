@@ -145,7 +145,7 @@ Oferta {{ offer.signature }}
                             </div>
                             <div>
                                 {% if position.deleted %}
-                                <a href="#" class="generic-modal btn btn-outline-danger btn-md">Przywróć pozycję</a>
+                                <a href="{% url 'position-restore' position.id %}" class="generic-modal btn btn-outline-danger btn-md">Przywróć pozycję</a>
                                 {% else %}
                                 <a href="{% url 'position-delete' offer.customer.id offer.id position.id %}"
                                     class="generic-modal btn btn-outline-danger btn-md">Usuń pozycję</a>

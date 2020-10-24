@@ -1,0 +1,31 @@
+{% load crispy_forms_tags %}
+
+<div class="modal fade" id="staticBackdrop" data-backdrop="static" data-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="staticBackdropLabel">Usuń produkt</h5>
+                <button type="button" class="close-modal" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form action="{% url 'position-restore' position_id %}" method="POST">
+                {% csrf_token %}
+                <div class="modal-body">
+
+                    <div class="h2 text-danger"><p>To spowoduje przywrócenie pozycji i WSZYSTKICH jej produktów. Jeśli
+                        jakieś produkty były wcześniej usunięte po ten operacji będą aktywne.</p>
+                        <p>Czy na pewno?</p>
+
+                    </div>
+                    <div class="modal-footer alert alert-danger">
+                        <button type="button" class="btn btn-secondary btn-sm btn-block close-modal"
+                            data-dismiss="modal">Anuluj</button>
+                        <input type="submit" class="btn btn-danger btn-sm btn-block" value="Usuń">
+
+                    </div>
+            </form>
+        </div>
+    </div>
+</div>

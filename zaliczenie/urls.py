@@ -117,6 +117,11 @@ urlpatterns = [
         views.ProductRestoreView.as_view(),
         name="product-restore",
     ),
+    path(
+        "restore-position/<int:position_id>",
+        views.PositionRestoreView.as_view(),
+        name="position-restore",
+    ),
     re_path(
         r"^customer/(?P<customer_id>\d+)/offers/",
         views.CustomerDetail.as_view(),

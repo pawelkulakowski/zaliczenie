@@ -492,7 +492,7 @@ class AddProductView(views.View):
             else:
                 form.save()
                 position = form.cleaned_data['position']
-                position.add_product()
+                # position.add_product()
 
             messages.add_message(
                 request, messages.SUCCESS, "Produkt pomyślnie dodany do bazy"
@@ -597,3 +597,15 @@ class ProductRestoreView(views.View):
         product.restore()
         messages.add_message(request, messages.SUCCESS, "Produkt pomyślnie przywrócony")
         return redirect(request.META.get("HTTP_REFERER"))
+
+
+class PositionRestoreView(views.View):
+    def get(self, request, position_id):
+        ctx = {'position_id':position_id}
+        return render(request, 'opakowania/position_restore_modal.html', ctx)
+
+    def post(self, request, position_id):
+        position = models.Position.objects.get(pk=position_id)
+        position.restore()
+        messages.add_message(request, messages.SUCCESS, "Pozycja i jej produkty pomyślnie przywrócone")
+        return HttpResponse("")

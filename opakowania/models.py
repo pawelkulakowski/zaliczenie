@@ -150,25 +150,34 @@ class Position(models.Model):
         return Product.objects.filter(position=self).filter(primary=True).first()
 
     def add_product(self):
-        self.numberOfProducts += 1
-        self.activeProducts += 1
+        if self.numberOfProducts is None:
+            self.numberOfProducts = 1
+        else:
+            self.numberOfProducts += 1
+            self.activeProducts += 1
         self.save()
+        print('added')
         return self.numberOfProducts
+        
 
     def remove_product(self):
         self.activeProducts -= 1
         self.deletedProducts += 1
         self.save()
+        print('deleted')
         return self.numberOfProducts
+        
 
     def restore_product(self):
         self.activeProducts += 1
         self.deletedProducts -= 1
         self.save()
+        print('restored')
         return self.numberOfProducts
+        
 
     def ordered_product_set(self):
-        return self.product_set.order_by("orderNumberInPosition")
+        return self.product_set.order_by('-primary',"orderNumberInPosition")
 
     def delete(self, *args, **kwargs):
         for product in self.product_set.all():
@@ -193,7 +202,7 @@ class Position(models.Model):
     offer = models.ForeignKey(Offer, null=False, on_delete=models.CASCADE)
 
     numberOfProducts = models.PositiveIntegerField(
-        default=1, verbose_name="Ilość produktów", null=False
+         verbose_name="Ilość produktów", null=True
     )
     activeProducts = models.PositiveIntegerField(default=1, null=False)
     deletedProducts = models.PositiveIntegerField(default=0, null=False)
@@ -214,7 +223,7 @@ class Product(models.Model):
 
     def save(self, *args, **kwargs):
         if self.orderNumberInPosition is None:
-            self.orderNumberInPosition = self.position.numberOfProducts
+            self.orderNumberInPosition = self.position.add_product()
         super(Product, self).save(*args, **kwargs)
 
     def delete(self, *args, **kwargs):
