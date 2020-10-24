@@ -20,7 +20,12 @@ from opakowania import views
 urlpatterns = [
     path("", views.MainPageView.as_view(), name="main-page"),
     path("add-customer", views.CustomerAddView.as_view(), name="customer-add"),
-    path("search-customer", views.CustomerSearchView.as_view(), name="customer-search"),
+    # path("search-customer", views.CustomerSearchView.as_view(), name="customer-search"),
+    path(
+        "customer",
+        views.CustomerSearchListView.as_view(),
+        name="customer-search",
+    ),
     path(
         "customer/<int:customer_id>/",
         views.CustomerEditView.as_view(),
@@ -111,7 +116,6 @@ urlpatterns = [
         views.ProductEditView.as_view(),
         name="product-edit",
     ),
-    
     path(
         "restore-product/<int:product_id>",
         views.ProductRestoreView.as_view(),

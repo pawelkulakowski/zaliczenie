@@ -50,7 +50,7 @@ class CustomerAddView(views.View):
             contact_form.save(customer)
             address_form.save(customer)
 
-            return redirect(reverse("search-customer"))
+            return redirect(reverse("customer-search"))
         else:
             return render(request, "opakowania/customer_add.html", ctx)
 
@@ -98,26 +98,45 @@ class CustomerEditView(views.View):
         return redirect(reverse('customer-search'))
 
 
-class CustomerSearchView(views.View):
-    def get(self, request):
-        search_form = forms.CustomerSearchForm()
-        customers = models.Customer.objects.all()
-        ctx = {"form": search_form, "customers": customers}
-        return render(request, "opakowania/customer_search.html", ctx)
+# class CustomerSearchView(views.View):
+#     def get(self, request):
+#         search_form = forms.CustomerSearchForm()
+#         customers = models.Customer.objects.all()
+#         ctx = {"form": search_form, "customers": customers}
+#         return render(request, "opakowania/customer_search.html", ctx)
 
-    def post(self, request):
-        search_form = forms.CustomerSearchForm(request.POST)
-        ctx = {"form": search_form}
+#     def post(self, request):
+#         search_form = forms.CustomerSearchForm(request.POST)
+#         ctx = {"form": search_form}
 
-        if search_form.is_valid():
-            name = search_form.cleaned_data["customer_name"]
-            tax_code = search_form.cleaned_data["tax_code"]
-            customers = models.Customer.objects.filter(
-                Q(customer_name__icontains=name) & Q(tax_code__icontains=tax_code)
-            )
-            ctx.update({"customers": customers})
+#         if search_form.is_valid():
+#             name = search_form.cleaned_data["customer_name"]
+#             tax_code = search_form.cleaned_data["tax_code"]
+#             customers = models.Customer.objects.filter(
+#                 Q(customer_name__icontains=name) & Q(tax_code__icontains=tax_code)
+#             )
+#             ctx.update({"customers": customers})
 
-        return render(request, "opakowania/customer_search.html", ctx)
+#         return render(request, "opakowania/customer_search.html", ctx)
+
+class CustomerSearchListView(ListView):
+    paginate_by = 4
+    model = models.Customer
+    context_object_name = 'customers'
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        if self.request.GET.get('customer_name') and self.request.GET.get('customer_name') != '' :
+            qs =qs.filter(customer_name__icontains=self.request.GET.get('customer_name'))
+        if self.request.GET.get('tax_code') and self.request.GET.get('tax_code') != '':
+            qs =qs.filter(tax_code__icontains=self.request.GET.get('tax_code'))
+        return qs
+    
+
+    def get_context_data(self, **kwargs):
+        context = super(CustomerSearchListView, self).get_context_data(**kwargs)
+        context['form'] = forms.CustomerSearchForm(self.request.GET)
+        return context
 
 
 class ContactSetPrimaryView(views.View):
