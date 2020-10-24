@@ -128,7 +128,7 @@ urlpatterns = [
     ),
     re_path(
         r"^customer/(?P<customer_id>\d+)/offers/",
-        views.CustomerDetail.as_view(),
+        views.CustomerOffers.as_view(),
         name="customer-offers",
     ),
 ]

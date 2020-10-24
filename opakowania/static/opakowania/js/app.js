@@ -24,6 +24,27 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     });
+    
+    $(document).on('shown.bs.modal', '.modal', function () {
+        $('[data-toggle=tooltip]').tooltip({ delay: { "show": 200, "hide": 100 } });
+        $('.table-row-link').click(function () {
+            window.location = $(this).data("href");
+        });
+        $('.page-link').on('click', function(e){
+            e.preventDefault();
+            console.log(this.href);
+            $.get(this.href, function (data) {
+                $('#modalContainer').hide();
+                $('body').removeClass('modal-open');
+                $('.modal-backdrop').remove();
+                
+                $('#modalContainer').html(data);
+                $('#staticBackdrop').removeClass('fade');
+                $("#staticBackdrop").modal();
+                $('#modalContainer').show();
+            });
+        });
+    });
 
     $("body").on('click', ".offerContactList", function (e) {
         e.preventDefault();
@@ -60,12 +81,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
 
-    $(document).on('shown.bs.modal', '.modal', function () {
-        $('[data-toggle=tooltip]').tooltip({ delay: { "show": 200, "hide": 100 } });
-        $('.table-row-link').click(function () {
-            window.location = $(this).data("href");
-        });
-    });
+    
 
     $('[data-toggle=tooltip]').tooltip({ delay: { "show": 200, "hide": 100 }, boundary: 'window' });
 

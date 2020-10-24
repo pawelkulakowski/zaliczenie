@@ -95,48 +95,50 @@ class CustomerEditView(views.View):
             customer_form.save()
             messages.add_message(request, messages.SUCCESS, "Zmiany pomyślnie zapisane")
 
-        return redirect(reverse('customer-search'))
+        return redirect(reverse("customer-search"))
 
-
-# class CustomerSearchView(views.View):
-#     def get(self, request):
-#         search_form = forms.CustomerSearchForm()
-#         customers = models.Customer.objects.all()
-#         ctx = {"form": search_form, "customers": customers}
-#         return render(request, "opakowania/customer_search.html", ctx)
-
-#     def post(self, request):
-#         search_form = forms.CustomerSearchForm(request.POST)
-#         ctx = {"form": search_form}
-
-#         if search_form.is_valid():
-#             name = search_form.cleaned_data["customer_name"]
-#             tax_code = search_form.cleaned_data["tax_code"]
-#             customers = models.Customer.objects.filter(
-#                 Q(customer_name__icontains=name) & Q(tax_code__icontains=tax_code)
-#             )
-#             ctx.update({"customers": customers})
-
-#         return render(request, "opakowania/customer_search.html", ctx)
 
 class CustomerSearchListView(ListView):
     paginate_by = 4
     model = models.Customer
-    context_object_name = 'customers'
+    context_object_name = "customers"
 
     def get_queryset(self):
         qs = super().get_queryset()
-        if self.request.GET.get('customer_name') and self.request.GET.get('customer_name') != '' :
-            qs =qs.filter(customer_name__icontains=self.request.GET.get('customer_name'))
-        if self.request.GET.get('tax_code') and self.request.GET.get('tax_code') != '':
-            qs =qs.filter(tax_code__icontains=self.request.GET.get('tax_code'))
+        if (
+            self.request.GET.get("customer_name")
+            and self.request.GET.get("customer_name") != ""
+        ):
+            qs = qs.filter(
+                customer_name__icontains=self.request.GET.get("customer_name")
+            )
+        if self.request.GET.get("tax_code") and self.request.GET.get("tax_code") != "":
+            qs = qs.filter(tax_code__icontains=self.request.GET.get("tax_code"))
         return qs
-    
 
     def get_context_data(self, **kwargs):
         context = super(CustomerSearchListView, self).get_context_data(**kwargs)
-        context['form'] = forms.CustomerSearchForm(self.request.GET)
+        context["form"] = forms.CustomerSearchForm(self.request.GET)
         return context
+
+
+class CustomerOffers(SingleObjectMixin, ListView):
+    paginate_by=4
+    template_name = "opakowania/customer_offers_modal.html"
+    pk_url_kwarg = "customer_id"
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object(queryset=models.Customer.objects.all())
+        return super().get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["customer"] = self.object
+        context["offers"] = context.pop("object_list")
+        return context
+
+    def get_queryset(self):
+        return self.object.ordered_offer_set()
 
 
 class ContactSetPrimaryView(views.View):
@@ -475,7 +477,7 @@ class AddProductView(views.View):
                     "primary": primary,
                     "contactPerson": contact,
                     "deliveryAddress": address,
-                    "position": position
+                    "position": position,
                 },
             )
         else:
@@ -485,7 +487,7 @@ class AddProductView(views.View):
                 initial={
                     "primary": primary,
                     "contactPerson": contact,
-                    "deliveryAddress": address
+                    "deliveryAddress": address,
                 },
             )
 
@@ -498,7 +500,7 @@ class AddProductView(views.View):
             form = forms.AddProductForm(offer, request.POST)
         else:
             form = forms.AddPositionForm(offer, request.POST)
-        
+
         if form.is_valid():
             if form.cleaned_data["primary"]:
                 offer.add_position()
@@ -510,7 +512,7 @@ class AddProductView(views.View):
                 product.save()
             else:
                 form.save()
-                position = form.cleaned_data['position']
+                position = form.cleaned_data["position"]
                 # position.add_product()
 
             messages.add_message(
@@ -547,9 +549,7 @@ class ProductEditView(views.View):
         form = forms.AddPositionForm(offer, request.POST)
         if form.is_valid():
             form.save()
-            messages.add_message(
-                request, messages.SUCCESS, "Zmiany zapisane pomyślnie"
-            )
+            messages.add_message(request, messages.SUCCESS, "Zmiany zapisane pomyślnie")
             return redirect(
                 reverse(
                     "offer-edit",
@@ -559,24 +559,6 @@ class ProductEditView(views.View):
                     },
                 )
             )
-
-
-class CustomerDetail(SingleObjectMixin, ListView):
-    template_name = "opakowania/customer_offers_modal.html"
-    pk_url_kwarg = "customer_id"
-
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object(queryset=models.Customer.objects.all())
-        return super().get(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["customer"] = self.object
-        context["offers"] = context.pop("object_list")
-        return context
-
-    def get_queryset(self):
-        return self.object.ordered_offer_set()
 
 
 class PositionDeleteModalView(views.View):
@@ -620,11 +602,13 @@ class ProductRestoreView(views.View):
 
 class PositionRestoreView(views.View):
     def get(self, request, position_id):
-        ctx = {'position_id':position_id}
-        return render(request, 'opakowania/position_restore_modal.html', ctx)
+        ctx = {"position_id": position_id}
+        return render(request, "opakowania/position_restore_modal.html", ctx)
 
     def post(self, request, position_id):
         position = models.Position.objects.get(pk=position_id)
         position.restore()
-        messages.add_message(request, messages.SUCCESS, "Pozycja i jej produkty pomyślnie przywrócone")
+        messages.add_message(
+            request, messages.SUCCESS, "Pozycja i jej produkty pomyślnie przywrócone"
+        )
         return HttpResponse("")
