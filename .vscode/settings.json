@@ -10,5 +10,6 @@
     "editor.rulers": [
         95
     ],
+    "editor.codeLens": true,
     "python.linting.pylintEnabled": true
 }

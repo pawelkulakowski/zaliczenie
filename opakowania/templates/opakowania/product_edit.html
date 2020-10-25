@@ -71,12 +71,19 @@ Oferta {{ offer.signature }}
                         <div class="col-3">
                             {{ form.form|as_crispy_field }}
                             {{ form.laminating|as_crispy_field }}
-                            {{ form.solid|as_crispy_field }}</div>
+                            {{ form.solid|as_crispy_field }}
+                        </div>
 
                         <div class="col-3">
                             {{ form.flexoOverprint|as_crispy_field }}
                             {{ form.offsetOverprint|as_crispy_field }}
-                            {{ form.refinement|as_crispy_field }}</div>
+                            {{ form.refinement|as_crispy_field }}
+                        </div>
+                        <span hidden>
+                            <div class="col-3">
+                                {{ form.position|as_crispy_field }}
+                            </div>
+                        </span>
                     </div>
                     <hr class="hr-p-5 hr-m-0">
 
@@ -123,7 +130,7 @@ Oferta {{ offer.signature }}
                 <div class="card-footer bg-light">
                     <div class="row">
                         <div class="col-6">
-                            <input type="submit" value="Dodaj" class="btn btn-outline-success btn-md btn-block">
+                            <input type="submit" value="Zapisz" class="btn btn-outline-success btn-md btn-block">
                         </div>
                         <div class="col-6">
                             <a href="{% url 'offer-edit' offer.customer.id offer.id %}"

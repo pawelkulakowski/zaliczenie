@@ -33,7 +33,7 @@ Oferta {{ offer.signature }}
                 {% csrf_token %}
                 <div class="card-header bg-dark">
                     <div class="d-flex justify-content-between">
-                        <div class="h3 p-0 m-0 text-white">Informacje podstawowe</div>      
+                        <div class="h3 p-0 m-0 text-white">Informacje podstawowe</div>
                         {% if form.primary.value %}
                         <div class="h3 p-0 m-0 text-warning">
                             Produkt główny
@@ -78,13 +78,14 @@ Oferta {{ offer.signature }}
                             {{ form.offsetOverprint|as_crispy_field }}
                             {{ form.refinement|as_crispy_field }}
                         </div>
-                        
-                        {% if form.primary.value == False %}
-                        <div class="col-3">
-                            {{ form.position|as_crispy_field }}
-                        </div>
-                        {% endif %}
 
+                        <span hidden>
+                            {% if form.primary.value == False %}
+                            <div class="col-3">
+                                {{ form.position|as_crispy_field }}
+                            </div>
+                            {% endif %}
+                        </span>
                     </div>
                     <hr class="hr-p-5 hr-m-0">
 

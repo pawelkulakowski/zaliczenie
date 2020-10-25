@@ -262,6 +262,7 @@ class AddPositionForm(forms.ModelForm):
             visible.field.widget.attrs["class"] = "form-control-sm"
 
 
+
 class AddProductForm(AddPositionForm):
     def __init__(self, offer, *args, **kwargs):
         super(AddProductForm, self).__init__(offer, *args, **kwargs)
