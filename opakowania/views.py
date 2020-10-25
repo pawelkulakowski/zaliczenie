@@ -119,7 +119,7 @@ class CustomerEditView(views.View):
 
 
 class CustomerSearchListView(ListView):
-    paginate_by = 2
+    paginate_by = 10
     model = models.Customer
     context_object_name = "customers"
 
@@ -559,14 +559,14 @@ class ProductEditView(views.View):
     def get(self, request, **kwargs):
         product = models.Product.objects.get(pk=kwargs["product_id"])
         offer = models.Offer.objects.get(pk=kwargs["offer_id"])
-        print(product)
-        form = forms.AddPositionForm(offer, instance=product)
+        form = forms.AddProductForm(offer, instance=product)
         ctx = {"form": form, "offer": offer}
         return render(request, "opakowania/product_edit.html", ctx)
 
     def post(self, request, *args, **kwargs):
         offer = models.Offer.objects.get(pk=kwargs["offer_id"])
-        form = forms.AddPositionForm(offer, request.POST)
+        product = models.Product.objects.get(pk=kwargs["product_id"])
+        form = forms.AddProductForm(offer, request.POST, instance=product)
         if form.is_valid():
             form.save()
             messages.add_message(request, messages.SUCCESS, "Zmiany zapisane pomyślnie")
@@ -579,6 +579,10 @@ class ProductEditView(views.View):
                     },
                 )
             )
+        else:
+            offer = models.Offer.objects.get(pk=kwargs["offer_id"])
+            ctx = {"form": form, "offer": offer}
+            return render(request, "opakowania/product_edit.html", ctx)
 
 
 class PositionDeleteModalView(views.View):
