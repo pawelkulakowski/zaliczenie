@@ -24,6 +24,10 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     });
+
+    $('.table-row-link').click(function () {
+        window.location = $(this).data("href");
+    });
     
     $(document).on('shown.bs.modal', '.modal', function () {
         $('[data-toggle=tooltip]').tooltip({ delay: { "show": 200, "hide": 100 } });
@@ -79,9 +83,6 @@ document.addEventListener('DOMContentLoaded', function () {
         $("#staticBackdrop").modal('hide');
         window.location.reload();
     });
-
-
-    
 
     $('[data-toggle=tooltip]').tooltip({ delay: { "show": 200, "hide": 100 }, boundary: 'window' });
 

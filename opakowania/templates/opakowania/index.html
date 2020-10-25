@@ -9,23 +9,134 @@ Witaj
 {% block navigation%}
 <div class="card-header">
   <ul class="nav nav-tabs card-header-tabs">
-      <li class="nav-item active">
-          <a class="nav-link" href="/">Start</a>
-      </li>
-      <li class="nav-item">
-          <a class="nav-link" href="{% url 'customer-add' %}">Nowy klient</a>
-      </li>
-      <li class="nav-item">
-          <a class="nav-link" href="{% url 'customer-search' %}">Szukaj klienta</a>
-      </li>
+    <li class="nav-item active">
+      <a class="nav-link" href="/">Start</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'customer-add' %}">Nowy klient</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{% url 'customer-search' %}">Szukaj klienta</a>
+    </li>
   </ul>
 </div>
 {% endblock %}
 
 {% block content %}
 <div class="row justify-content-center">
-  <div class="col-12">
-    sdfsdfsdf
-     </div>
+  <div class="col-10">
+    <div class="card" style="height: 85vh; overflow-y: auto">
+      <div class="card-header">
+        <span class="h2">Ostatnie aktywności</span>
+      </div>
+      <div class="card-body">
+
+        <div class="row">
+          <div class="col-12">
+            <div class="h3 bg-dark text-warning p-1">Edytowane oferty</div>
+            <div class="table-wrapper-scroll-y my-custom-scrollbar p-0" style="height: 220px;">
+              <table class="table table-sm table-hover">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col" class="th-sm sticky-head">Klient</th>
+                    <th scope="col" class="th-sm sticky-head">Sygnatura</th>
+                    <th scope="col" class="th-sm sticky-head">Status</th>
+                    <th scope="col" class="th-sm sticky-head">Ilość pozycji</th>
+                    <th scope="col" class="th-sm sticky-head">Ilość produktów</th>
+                    <th scope="col" class="th-sm sticky-head">Data dodania</th>
+                    <th scope="col" class="th-sm sticky-head">Ostania edycja</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for offer in offers %}
+                  <tr class="table-row-link" data-offer_id={{ offer.id }} data-toggle="tooltip" data-placement="left"
+                    title="Kliknij aby otworzyć" data-href="{% url 'offer-edit' offer.customer.id offer.id %}">
+                    <td>{{ offer.customer.customer_name }}</td>
+                    <td>{{ offer.signature }}</td>
+                    <td>{{ offer.get_status_display }}</td>
+                    <td>{{ offer.get_positions_count }}</td>
+                    <td>{{ offer.get_product_count }}</td>
+                    <td>{{ offer.created }}</td>
+                    <td>{{ offer.lastModified }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="w-100 mb-4"></div>
+        <div class="row">
+          <div class="col-12">
+            <div class="h3 bg-dark text-warning p-1">Dodani klienci</div>
+            <div class="table-wrapper-scroll-y my-custom-scrollbar p-0" style="height: 220px;">
+              <table class="table table-sm table-hover">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col" class="th-sm sticky-head">Nazwa</th>
+                    <th scope="col" class="th-sm sticky-head">NIP</th>
+                    <th scope="col" class="th-sm sticky-head">Adres</th>
+                    <th scope="col" class="th-sm sticky-head">Kontakt</th>
+                    <th scope="col" class="th-sm sticky-head">Ilość ofert</th>
+                    <th scope="col" class="th-sm sticky-head">Data dodania</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for customer in customers %}
+                  <tr>
+                    <td>{{ customer.customer_name }}</td>
+                    <td>{{ customer.tax_code }}</td>
+                    <td>{{ customer.get_primary_address.address }}</td>
+                    <td>{{ customer.get_primary_contact }}</td>
+                    <td>{{ customer.offer_set.all.count }}</td>
+                    <td>{{ customer.created }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <div class="w-100 mb-4"></div>
+        <div class="row">
+          <div class="col-12">
+            <div class="h3 bg-dark text-warning p-1">Edytowane produkty</div>
+            <div class="table-wrapper-scroll-y my-custom-scrollbar p-0" style="height: 220px;">
+              <table class="table table-sm table-hover">
+                <thead class="thead-light">
+                  <tr>
+                    <th scope="col" class="th-sm sticky-head">Klient</th>
+                    <th scope="col" class="th-sm sticky-head">Oferta</th>
+                    <th scope="col" class="th-sm sticky-head">Nazwa</th>
+                    <th scope="col" class="th-sm sticky-head">Indeks wewnętrzny</th>
+                    <th scope="col" class="th-sm sticky-head">Data dodania</th>
+                    <th scope="col" class="th-sm sticky-head">Data edycji</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for product in products %}
+                  <tr class="table-row-link"  data-toggle="tooltip" data-placement="left"
+                    title="Kliknij aby otworzyć"
+                    data-href="{% url 'product-edit' product.position.offer.customer.id  product.position.offer.id product.id%}">
+                    <td>{{ product.position.offer.customer.customer_name }}</td>
+                    <td>{{ product.position.offer.signature }}</td>
+                    <td>{{ product.name }}</td>
+                    <td>{{ product.innerIndex }}</td>
+                    <td>{{ product.created }}</td>
+                    <td>{{ product.lastModified }}</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
 </div>
+
 {% endblock %}

@@ -18,7 +18,7 @@ from django.urls import path, re_path
 from opakowania import views
 
 urlpatterns = [
-    path("", views.MainPageView.as_view(), name="main-page"),
+    path("", views.MainPageListView.as_view(), name="main-page"),
     path("add-customer", views.CustomerAddView.as_view(), name="customer-add"),
     # path("search-customer", views.CustomerSearchView.as_view(), name="customer-search"),
     path(

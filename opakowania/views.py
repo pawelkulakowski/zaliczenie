@@ -5,16 +5,36 @@ from django.views.generic.list import ListView
 from opakowania import forms
 from opakowania import models
 from django.http import HttpResponse, HttpResponseRedirect
-from django.db.models import Q
+from django.db.models import Q, Count
 from django.contrib import messages
 from datetime import datetime
 import requests
-
+from django.core.paginator import Paginator
 
 class MainPageView(views.View):
     def get(self, request):
-        return render(request, "opakowania/index.html")
+        offers = models.Offer.objects.annotate(Count('lastModified')).order_by('-lastModified')[:5]
+        # offers = Paginator(models.Offer.objects.annotate(Count('lastModified')).order_by('-lastModified'), 5)
+        ctx ={
+            'offers':offers
+        }
+        return render(request, "opakowania/index.html", ctx)
 
+class MainPageListView(ListView):
+    model = models.Offer
+    template_name="opakowania/index.html"
+    context_object_name = "offers"
+
+    def get_queryset(self):
+        qs = models.Offer.objects.order_by('-lastModified')
+        return qs
+
+    def get_context_data(self, **kwargs):
+        context = super(MainPageListView, self).get_context_data(**kwargs)
+        context["customers"] = models.Customer.objects.all().order_by('-created')
+        context["products"] = models.Product.objects.filter(deleted=False).order_by('-lastModified')
+        
+        return context
 
 class CustomerAddView(views.View):
     def get(self, request):
@@ -99,7 +119,7 @@ class CustomerEditView(views.View):
 
 
 class CustomerSearchListView(ListView):
-    paginate_by = 4
+    paginate_by = 2
     model = models.Customer
     context_object_name = "customers"
 
@@ -123,7 +143,7 @@ class CustomerSearchListView(ListView):
 
 
 class CustomerOffers(SingleObjectMixin, ListView):
-    paginate_by=4
+    paginate_by=5
     template_name = "opakowania/customer_offers_modal.html"
     pk_url_kwarg = "customer_id"
 

@@ -37,7 +37,7 @@ class Address(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f'{self.address}, {self.zip_code}, {self.city} {", Adres główny" if self.primary else ""}'
+        return f'{self.address}, {self.zip_code}, {self.city}'
 
 
 class AddressChoiceField(forms.ModelChoiceField):
@@ -55,7 +55,7 @@ class Contact(models.Model):
 
     def __str__(self):
         return (
-            f'{self.name}, {self.position} {", Kontak główny" if self.primary else ""}'
+            f'{self.name}, {self.position}'
         )
 
 
